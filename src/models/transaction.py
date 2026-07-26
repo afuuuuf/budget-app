@@ -1,8 +1,7 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime
+from sqlalchemy import Column, String, Float, DateTime
 from datetime import datetime
 from ..database import Base
 from ..utils import UuidUtil
-
 
 class Transaction(Base):
     __tablename__ = "transactions"
@@ -13,3 +12,4 @@ class Transaction(Base):
     category = Column(String, index=True)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
+    deleted_at = Column(DateTime, nullable=True)

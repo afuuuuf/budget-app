@@ -1,7 +1,8 @@
 from .requests import TransactionUpsertRequest
-from .responses import TransactionResponse
+from .responses import TransactionUpsertResponse, TransactionStatusResponse
 
 __all__ = [
     "TransactionUpsertRequest",
-    "TransactionResponse"
+    "TransactionUpsertResponse",
+    "TransactionStatusResponse"
     ]
