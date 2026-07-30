@@ -5,6 +5,7 @@ from ..database import get_db
 from ..enums import Status
 from ..schemas import requests, responses
 from ..services import TransactionService
+from ..services.impl import TransactionServiceImpl
 from ..repository.transaction_repository import TransactionRepository
 from ..mappers import TransactionMapper
 
@@ -14,7 +15,7 @@ def get_mapper() -> TransactionMapper:
     return TransactionMapper()
 
 def get_service(db: Session = Depends(get_db)) -> TransactionService:
-    return TransactionService(
+    return TransactionServiceImpl(
         transaction_repo=TransactionRepository(db),
         transaction_mapper=TransactionMapper()
     )

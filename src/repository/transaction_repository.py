@@ -14,7 +14,7 @@ class TransactionRepository:
         return entity
 
     def list_all(self) -> list[Transaction]:
-        return self.db.query(Transaction).all()
+        return self.db.query(Transaction).filter_by(deleted_at = None).all()
 
     def find_by_id(self, id: str) -> Transaction | None:
         return self.db.query(Transaction).filter_by(id = id, deleted_at= None).first()

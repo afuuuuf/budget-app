@@ -1,5 +1,6 @@
 from .transaction_service import TransactionService
+from .dashboard_service import DashboardService
 
 __all__ = [
-    "TransactionService"
+    "TransactionService", "DashboardService"
 ]
