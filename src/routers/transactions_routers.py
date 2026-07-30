@@ -15,8 +15,8 @@ def get_mapper() -> TransactionMapper:
 
 def get_service(db: Session = Depends(get_db)) -> TransactionService:
     return TransactionService(
-        transaction_repo=TransactionRepository(db),
-        transaction_mapper=TransactionMapper()
+        budget_repo=TransactionRepository(db),
+        budget_mapper=TransactionMapper()
     )
 
 @router.post(

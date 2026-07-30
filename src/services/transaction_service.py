@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 class TransactionService:
     """Transaction Service Layer"""
 
-    def __init__(self, transaction_repo: TransactionRepository, transaction_mapper: TransactionMapper):
-        self.transaction_repo = transaction_repo
-        self.transaction_mapper = transaction_mapper
+    def __init__(self, budget_repo: TransactionRepository, budget_mapper: TransactionMapper):
+        self.transaction_repo = budget_repo
+        self.transaction_mapper = budget_mapper
 
     def create_transaction(self, txnDto: TransactionDto) -> TransactionDto:
         txnEntity = self.transaction_mapper.to_entity(txnDto)
