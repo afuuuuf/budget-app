@@ -19,7 +19,7 @@ class TransactionRepository:
         return self.db.query(Transaction).filter_by(id = id, deleted_at= None).first()
 
     def delete(self, entity: Transaction) -> None:
-        entity.deleted_at = DateUtil.get_current_time
+        entity.deleted_at = DateUtil.get_current_time()
         self.db.commit()
         self.db.refresh(entity)
         return entity

@@ -36,3 +36,7 @@ class BudgetMapper:
             updated_at=entity.updated_at,
             deleted_at=entity.deleted_at
         )
+
+    def update_entity_from_dto(self, entity: Budget, dto: BudgetDto) -> None:
+        entity.amount = dto.amount
+        entity.budgetType = dto.budgetType

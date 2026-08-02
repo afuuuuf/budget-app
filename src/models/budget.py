@@ -1,7 +1,4 @@
-import calendar
-
 from sqlalchemy import Column, String, Float, DateTime
-from datetime import datetime
 from ..database import Base
 from ..utils import UuidUtil, DateUtil
 

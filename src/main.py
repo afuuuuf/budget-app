@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from .routers import transactions_routers, budget_routers
-from .config.log_config import setup_logging
 from contextlib import asynccontextmanager
 from alembic.config import Config
 from alembic import command

@@ -25,3 +25,9 @@ class BudgetRouters:
         budgetDto = mapper.to_dto(budget)
         result = budget_service.create_budget(budgetDto)
         return mapper.to_resp(result)
+
+    @router.put("/{id}", response_model=responses.BudgetUpsertResponse, status_code=200)
+    def edit_budget(id: str, budget: requests.BudgetUpsertRequest, budget_service: BudgetService = Depends(get_service), mapper: BudgetMapper = Depends(get_mapper)):
+        budgetDto = mapper.to_dto(budget)
+        result = budget_service.edit_budget(id, budgetDto)
+        return mapper.to_resp(result)

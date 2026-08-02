@@ -12,3 +12,19 @@ class BudgetService:
         budgetEntity = self.budget_mapper.to_entity(budgetDto)
         created_budget = self.budget_repo.save(budgetEntity)
         return self.budget_mapper.to_dto_from_entity(created_budget)
+
+    def edit_budget(self, id: str, budgetDto: BudgetDto) -> BudgetDto:
+        budgetEntity = self.budget_repo.find_by_id(id)
+        if budgetEntity is None:
+            raise ValueError(f"Budget {id} not found")
+
+        self.budget_mapper.update_entity_from_dto(budgetEntity, budgetDto)
+        edited_budget = self.budget_repo.update(budgetEntity)
+        return self.budget_mapper.to_dto_from_entity(edited_budget)
+
+    def get_budget_details(self, id: str) -> BudgetDto | None:
+        budgetEntity = self.budget_repo.find_by_id(id)
+        if not budgetEntity:
+            return None
+        budgetDto = self.budget_mapper.to_dto_from_entity(budgetEntity)
+        return budgetDto

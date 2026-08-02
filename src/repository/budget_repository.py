@@ -1,7 +1,6 @@
-from datetime import datetime
-
 from sqlalchemy.orm import Session
 from ..models import Budget
+from ..utils import DateUtil
 
 class BudgetRepository:
     def __init__(self, db: Session):
@@ -13,6 +12,12 @@ class BudgetRepository:
         self.db.refresh(entity)
         return entity
 
+    def update(self, entity: Budget) -> Budget:
+        entity.updated_at = DateUtil.get_current_time()
+        self.db.commit()
+        self.db.refresh(entity)
+        return entity
+
     def list_all(self) -> list[Budget]:
         return self.db.query(Budget).all()
 
@@ -20,7 +25,7 @@ class BudgetRepository:
         return self.db.query(Budget).filter_by(id = id, deleted_at= None).first()
 
     def delete(self, entity: Budget) -> None:
-        entity.deleted_at = datetime.now()
+        entity.deleted_at = DateUtil.get_current_time()
         self.db.commit()
         self.db.refresh(entity)
         return entity
