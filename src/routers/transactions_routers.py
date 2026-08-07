@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -15,12 +15,12 @@ def get_mapper() -> TransactionMapper:
 
 def get_service(db: Session = Depends(get_db)) -> TransactionService:
     return TransactionService(
-        transaction_repo=TransactionRepository(db),
-        transaction_mapper=TransactionMapper()
+        budget_repo=TransactionRepository(db),
+        budget_mapper=TransactionMapper()
     )
 
 @router.post(
-        "/",
+        "",
         response_model=responses.TransactionUpsertResponse,
         status_code=201)
 def create_transaction(txn: requests.TransactionUpsertRequest, service: TransactionService = Depends(get_service), mapper: TransactionMapper = Depends(get_mapper)):
@@ -28,7 +28,7 @@ def create_transaction(txn: requests.TransactionUpsertRequest, service: Transact
     result = service.create_transaction(txnDto)
     return mapper.to_resp(result)
 
-@router.get("/",
+@router.get("",
             response_model=list[responses.TransactionUpsertResponse])
 def list_transactions(service: TransactionService = Depends(get_service), mapper: TransactionMapper = Depends(get_mapper)):
     results = service.list_transactions()
@@ -37,13 +37,9 @@ def list_transactions(service: TransactionService = Depends(get_service), mapper
 @router.get("/{id}", response_model=responses.TransactionUpsertResponse)
 def get_transaction(id: str, service: TransactionService = Depends(get_service), mapper: TransactionMapper = Depends(get_mapper)):
     result = service.get_transaction(id)
-    if result is None:
-            raise HTTPException(status_code=404, detail="Transaction Not Found")
     return mapper.to_resp(result)
 
 @router.delete("/{id}", response_model=responses.TransactionStatusResponse)
 def delete_transaction(id: str, service: TransactionService = Depends(get_service), mapper: TransactionMapper = Depends(get_mapper)):
-    result = service.delete_transaction(id)
-    if result is None:
-        raise HTTPException(status_code=404, detail="Transaction Not Found")
+    service.delete_transaction(id)
     return responses.TransactionStatusResponse.get_status_message(Status.DELETED)
