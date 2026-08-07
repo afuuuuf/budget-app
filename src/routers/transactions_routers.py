@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -37,13 +37,9 @@ def list_transactions(service: TransactionService = Depends(get_service), mapper
 @router.get("/{id}", response_model=responses.TransactionUpsertResponse)
 def get_transaction(id: str, service: TransactionService = Depends(get_service), mapper: TransactionMapper = Depends(get_mapper)):
     result = service.get_transaction(id)
-    if result is None:
-            raise HTTPException(status_code=404, detail="Transaction Not Found")
     return mapper.to_resp(result)
 
 @router.delete("/{id}", response_model=responses.TransactionStatusResponse)
 def delete_transaction(id: str, service: TransactionService = Depends(get_service), mapper: TransactionMapper = Depends(get_mapper)):
-    result = service.delete_transaction(id)
-    if result is None:
-        raise HTTPException(status_code=404, detail="Transaction Not Found")
+    service.delete_transaction(id)
     return responses.TransactionStatusResponse.get_status_message(Status.DELETED)

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from .routers import transactions_routers, budget_routers
+from .handler import ExceptionHandler
 from contextlib import asynccontextmanager
 from alembic.config import Config
 from alembic import command
@@ -14,6 +15,7 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="Personal Budget API")
+ExceptionHandler.register_exception_handlers(app)
 
 app.include_router(transactions_routers.router)
 app.include_router(budget_routers.router)

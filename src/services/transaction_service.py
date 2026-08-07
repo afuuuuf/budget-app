@@ -1,15 +1,12 @@
-from datetime import datetime
 import logging
 
-from sqlalchemy.orm import Session
-
-from .. import models
+from ..exception import NotFoundException
 from ..routers.dto import TransactionDto
-from ..schemas import requests
 from ..repository import TransactionRepository
 from ..mappers import TransactionMapper
 
 logger = logging.getLogger(__name__)
+TRANSACTION_NOT_FOUND_MESSAGE = "Transaction Not Found"
 
 class TransactionService:
     """Transaction Service Layer"""
@@ -29,14 +26,14 @@ class TransactionService:
     def get_transaction(self, id: str) -> TransactionDto | None:
         txnEntity = self.transaction_repo.find_by_id(id)
         if not txnEntity:
-            return None
+            raise NotFoundException(TRANSACTION_NOT_FOUND_MESSAGE)
         txtDto = self.transaction_mapper.to_dto_from_entity(txnEntity)
         return txtDto
         
     def delete_transaction(self, id: str) -> TransactionDto | None:
         txnEntity = self.transaction_repo.find_by_id(id)
         if not txnEntity:
-            return None
+            raise NotFoundException(TRANSACTION_NOT_FOUND_MESSAGE)
         txnDto = self.transaction_mapper.to_dto_from_entity(txnEntity)
         self.transaction_repo.delete(txnEntity)
         return txnDto
