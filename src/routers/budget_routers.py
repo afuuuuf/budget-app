@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -6,6 +6,7 @@ from ..schemas import requests, responses
 from ..services import BudgetService
 from ..repository import BudgetRepository
 from ..mappers import BudgetMapper
+from ..enums import BudgetType
 
 router = APIRouter(prefix="/budgets", tags=["budgets"])
 
@@ -21,13 +22,28 @@ def get_service(db: Session = Depends(get_db)) -> BudgetService:
 class BudgetRouters:
 
     @router.post("/", response_model=responses.BudgetUpsertResponse, status_code=201)
-    def create_budget(budget: requests.BudgetUpsertRequest, budget_service: BudgetService = Depends(get_service), mapper: BudgetMapper = Depends(get_mapper)):
+    def create_budget(budget: requests.BudgetCreateRequest, budget_service: BudgetService = Depends(get_service), mapper: BudgetMapper = Depends(get_mapper)):
         budgetDto = mapper.to_dto(budget)
         result = budget_service.create_budget(budgetDto)
         return mapper.to_resp(result)
 
-    @router.put("/{id}", response_model=responses.BudgetUpsertResponse, status_code=200)
-    def edit_budget(id: str, budget: requests.BudgetUpsertRequest, budget_service: BudgetService = Depends(get_service), mapper: BudgetMapper = Depends(get_mapper)):
+    @router.put("/", response_model=responses.BudgetUpsertResponse, status_code=200)
+    def edit_budget(
+        budget: requests.BudgetEditRequest,
+        budgetType: BudgetType = Query(..., description="Filter by budget type"),
+        month: str = Query(..., description="Filter by Month"),
+        budget_service: BudgetService = Depends(get_service),
+        mapper: BudgetMapper = Depends(get_mapper)):
         budgetDto = mapper.to_dto(budget)
-        result = budget_service.edit_budget(id, budgetDto)
+        result = budget_service.edit_budget(budgetDto, budgetType, month)
+        return mapper.to_resp(result)
+
+    @router.get("/", response_model=responses.BudgetDetailsResponse)
+    def get_budget_details(
+        budgetType: BudgetType = Query(..., description="Filter by budget type"),
+        month: str = Query(..., description="Filter by Month"),
+        budget_service: BudgetService = Depends(get_service),
+        mapper: BudgetMapper = Depends(get_mapper)
+    ):
+        result = budget_service.get_budget_details(budgetType, month)
         return mapper.to_resp(result)

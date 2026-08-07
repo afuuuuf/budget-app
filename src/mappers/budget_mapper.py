@@ -3,7 +3,7 @@ from ..routers.dto import BudgetDto
 from ..models import Budget
 
 class BudgetMapper:
-    def to_dto(self, req: requests.BudgetUpsertRequest) -> BudgetDto:
+    def to_dto(self, req: requests.BudgetCreateRequest) -> BudgetDto:
         return BudgetDto(
             budgetType=req.budgetType,
             amount=req.amount,
@@ -17,6 +17,11 @@ class BudgetMapper:
             amount=dto.amount,
             created_at=dto.created_at,
             updated_at=dto.updated_at
+        )
+
+    def to_dto(self, req: requests.BudgetEditRequest) -> BudgetDto:
+        return BudgetDto(
+            amount=req.amount,
         )
 
         # --- Dto -> Repo ---
@@ -34,7 +39,8 @@ class BudgetMapper:
             budgetType=entity.budgetType,
             created_at=entity.created_at,
             updated_at=entity.updated_at,
-            deleted_at=entity.deleted_at
+            deleted_at=entity.deleted_at,
+            created_month=entity.created_month
         )
 
     def update_entity_from_dto(self, entity: Budget, dto: BudgetDto) -> None:
