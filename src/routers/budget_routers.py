@@ -21,13 +21,13 @@ def get_service(db: Session = Depends(get_db)) -> BudgetService:
 
 class BudgetRouters:
 
-    @router.post("/", response_model=responses.BudgetUpsertResponse, status_code=201)
+    @router.post("", response_model=responses.BudgetUpsertResponse, status_code=201)
     def create_budget(budget: requests.BudgetCreateRequest, budget_service: BudgetService = Depends(get_service), mapper: BudgetMapper = Depends(get_mapper)):
         budgetDto = mapper.to_dto(budget)
         result = budget_service.create_budget(budgetDto)
         return mapper.to_resp(result)
 
-    @router.put("/", response_model=responses.BudgetUpsertResponse, status_code=200)
+    @router.put("", response_model=responses.BudgetUpsertResponse, status_code=200)
     def edit_budget(
         budget: requests.BudgetEditRequest,
         budgetType: BudgetType = Query(..., description="Filter by budget type"),
@@ -38,7 +38,7 @@ class BudgetRouters:
         result = budget_service.edit_budget(budgetDto, budgetType, month)
         return mapper.to_resp(result)
 
-    @router.get("/", response_model=responses.BudgetDetailsResponse)
+    @router.get("", response_model=responses.BudgetDetailsResponse)
     def get_budget_details(
         budgetType: BudgetType = Query(..., description="Filter by budget type"),
         month: str = Query(..., description="Filter by Month"),

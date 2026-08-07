@@ -20,7 +20,7 @@ def get_service(db: Session = Depends(get_db)) -> TransactionService:
     )
 
 @router.post(
-        "/",
+        "",
         response_model=responses.TransactionUpsertResponse,
         status_code=201)
 def create_transaction(txn: requests.TransactionUpsertRequest, service: TransactionService = Depends(get_service), mapper: TransactionMapper = Depends(get_mapper)):
@@ -28,7 +28,7 @@ def create_transaction(txn: requests.TransactionUpsertRequest, service: Transact
     result = service.create_transaction(txnDto)
     return mapper.to_resp(result)
 
-@router.get("/",
+@router.get("",
             response_model=list[responses.TransactionUpsertResponse])
 def list_transactions(service: TransactionService = Depends(get_service), mapper: TransactionMapper = Depends(get_mapper)):
     results = service.list_transactions()
