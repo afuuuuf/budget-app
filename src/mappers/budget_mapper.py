@@ -3,7 +3,7 @@ from ..routers.dto import BudgetDto
 from ..models import Budget
 
 class BudgetMapper:
-    def to_dto(self, req: requests.BudgetCreateRequest) -> BudgetDto:
+    def to_dto_from_create_request(self, req: requests.BudgetCreateRequest) -> BudgetDto:
         return BudgetDto(
             budgetType=req.budgetType,
             amount=req.amount,
@@ -19,7 +19,7 @@ class BudgetMapper:
             updated_at=dto.updated_at
         )
 
-    def to_dto(self, req: requests.BudgetEditRequest) -> BudgetDto:
+    def to_dto_from_edit_request(self, req: requests.BudgetEditRequest) -> BudgetDto:
         return BudgetDto(
             amount=req.amount,
         )

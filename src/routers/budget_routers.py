@@ -23,7 +23,7 @@ class BudgetRouters:
 
     @router.post("", response_model=responses.BudgetUpsertResponse, status_code=201)
     def create_budget(budget: requests.BudgetCreateRequest, budget_service: BudgetService = Depends(get_service), mapper: BudgetMapper = Depends(get_mapper)):
-        budgetDto = mapper.to_dto(budget)
+        budgetDto = mapper.to_dto_from_create_request(budget)
         result = budget_service.create_budget(budgetDto)
         return mapper.to_resp(result)
 
@@ -34,7 +34,7 @@ class BudgetRouters:
         month: str = Query(..., description="Filter by Month"),
         budget_service: BudgetService = Depends(get_service),
         mapper: BudgetMapper = Depends(get_mapper)):
-        budgetDto = mapper.to_dto(budget)
+        budgetDto = mapper.to_dto_from_edit_request(budget)
         result = budget_service.edit_budget(budgetDto, budgetType, month)
         return mapper.to_resp(result)
 
