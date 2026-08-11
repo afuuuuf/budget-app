@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from ..exception import NotFoundException
+from ..exception import NotFoundException, UnsupportedActionException
 
 class ExceptionHandler:
 
@@ -24,3 +24,7 @@ class ExceptionHandler:
         @app.exception_handler(NotFoundException)
         async def not_found_exception_handler(request: Request, exc: NotFoundException):
             return JSONResponse(status_code=404, content={"detail": str(exc)})
+
+        @app.exception_handler(UnsupportedActionException)
+        async def unsupported_action_exception_handler(request: Request, exc: UnsupportedActionException):
+            return JSONResponse(status_code=400, content={"detail": str(exc)})
