@@ -1,8 +1,8 @@
 from enum import StrEnum
 
 class BudgetType(StrEnum):
-    BILLS = "Bills"
-    SHOPPING = "Shopping"
-    TRANSPORTATION = "Transportation"
-    ENTERTAINMENT = "Entertainment"
-    OTHERS = "Others"
+    BILLS = "BILLS"
+    SHOPPING = "SHOPPING"
+    TRANSPORTATION = "TRANSPORTATION"
+    ENTERTAINMENT = "ENTERTAINMENT"
+    OTHERS = "OTHERS"

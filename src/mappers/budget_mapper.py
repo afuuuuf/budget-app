@@ -5,7 +5,7 @@ from ..models import Budget
 class BudgetMapper:
     def to_dto_from_create_request(self, req: requests.BudgetCreateRequest) -> BudgetDto:
         return BudgetDto(
-            budgetType=req.budgetType,
+            budget_type=req.budgetType,
             amount=req.amount,
         )
 
@@ -13,7 +13,7 @@ class BudgetMapper:
     def to_resp(self, dto: BudgetDto) -> responses.BudgetUpsertResponse:
         return responses.BudgetUpsertResponse(
             id=dto.id,
-            budgetType=dto.budgetType,
+            budgetType=dto.budget_type,
             amount=dto.amount,
             created_at=dto.created_at,
             updated_at=dto.updated_at
@@ -29,14 +29,14 @@ class BudgetMapper:
         return Budget(
             id=dto.id, #type: ignore
             amount=dto.amount,
-            budgetType= dto.budgetType,
+            budget_type= dto.budget_type,
         )
 
     def to_dto_from_entity(self, entity: Budget) -> BudgetDto:
         return BudgetDto(
             id=entity.id,
             amount=entity.amount,
-            budgetType=entity.budgetType,
+            budget_type=entity.budget_type,
             created_at=entity.created_at,
             updated_at=entity.updated_at,
             deleted_at=entity.deleted_at,
@@ -45,4 +45,4 @@ class BudgetMapper:
 
     def update_entity_from_dto(self, entity: Budget, dto: BudgetDto) -> None:
         entity.amount = dto.amount
-        entity.budgetType = dto.budgetType
+        entity.budget_type = dto.budget_type
