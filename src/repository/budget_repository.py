@@ -26,7 +26,7 @@ class BudgetRepository:
         return self.db.query(Budget).filter_by(id = id, deleted_at= None).first()
 
     def find_by_budget_type_and_month(self, budgetType: BudgetType, month: str) -> Budget | None:
-        return self.db.query(Budget).filter_by(budgetType = budgetType,
+        return self.db.query(Budget).filter_by(budget_type = budgetType,
                                                 created_month = month
                                                 ).first()
 

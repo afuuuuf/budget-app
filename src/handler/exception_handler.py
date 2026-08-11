@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, logger
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
@@ -8,6 +8,12 @@ class ExceptionHandler:
 
     @staticmethod
     def register_exception_handlers(app: FastAPI):
+
+        @app.exception_handler(Exception)
+        async def generic_exception_handler(request: Request, exc: Exception):
+            logger.exception(f"Unhandled exception on {request.method} {request.url.path}")
+            return JSONResponse(status_code=500, content={"detail": "Internal server error"})
+
         @app.exception_handler(RequestValidationError)
         async def validation_exception_handler(request: Request, exc: RequestValidationError):
             errors = exc.errors()
@@ -27,4 +33,4 @@ class ExceptionHandler:
 
         @app.exception_handler(UnsupportedActionException)
         async def unsupported_action_exception_handler(request: Request, exc: UnsupportedActionException):
-            return JSONResponse(status_code=400, content={"detail": str(exc)})
+            return JSONResponse(status_code=409, content={"detail": str(exc)})
