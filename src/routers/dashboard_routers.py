@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..mappers import DashboardMapper
-from ..schemas import responses, requests
+from ..repository import BudgetRepository, TransactionRepository
+from ..schemas import responses
 from ..services import DashboardService
 from ..services.impl import DashboardServiceImpl
-from ..repository import TransactionRepository, BudgetRepository
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -19,8 +19,9 @@ def get_service(db: Session = Depends(get_db)) -> DashboardService:
     return DashboardServiceImpl(
         transaction_repo=TransactionRepository(db),
         budget_repo=BudgetRepository(db),
-        dashboard_mapper=DashboardMapper()
+        dashboard_mapper=DashboardMapper(),
     )
+
 
 class DashboardRouters:
     @router.get("", response_model=responses.DashboardListResponse, status_code=200)

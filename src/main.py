@@ -8,7 +8,7 @@ from alembic import command
 
 from .config import settings
 from .handler import ExceptionHandler
-from .routers import budget_routers, transactions_routers, dashboard_routers
+from .routers import budget_routers, dashboard_routers, transactions_routers
 
 
 def run_migrations():
@@ -37,6 +37,7 @@ ExceptionHandler.register_exception_handlers(app)
 app.include_router(transactions_routers.router)
 app.include_router(budget_routers.router)
 app.include_router(dashboard_routers.router)
+
 
 @app.get("/")
 def root():

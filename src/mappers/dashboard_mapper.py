@@ -1,6 +1,7 @@
 from ..routers.dto import DashboardDto
 from ..schemas import responses
 
+
 class DashboardMapper:
     def to_resp(self, dto: DashboardDto) -> responses.DashboardListResponse:
         return responses.DashboardListResponse(

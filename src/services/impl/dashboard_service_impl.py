@@ -19,7 +19,9 @@ class DashboardServiceImpl(DashboardService):
         total_income = self.transaction_repo.sum_by_flow("INCOME")
         total_expenses = self.transaction_repo.sum_by_flow("EXPENSE")
         current_balance = total_income - total_expenses
-        savings_progress = (current_balance / total_income * 100) if total_income else 0.0
+        savings_progress = (
+            (current_balance / total_income * 100) if total_income else 0.0
+        )
 
         category_spending = self.transaction_repo.sum_by_category()
         spent_by_category = dict(category_spending)
