@@ -1,6 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
-class Status(str, Enum):
+
+class Status(StrEnum):
     CREATED = "Created Successfully"
     DELETED = "Deleted Successfully"
     UPDATED = "Updated Successfully"

@@ -1,15 +1,16 @@
-from ..schemas import requests, responses
-from ..routers.dto import TransactionDto
 from ..models import Transaction
+from ..routers.dto import TransactionDto
+from ..schemas import requests, responses
+
 
 class TransactionMapper:
-
     # --- Routers -> Dto Mapper ---
     def to_dto(self, req: requests.TransactionUpsertRequest) -> TransactionDto:
         return TransactionDto(
             amount=req.amount,
             description=req.description,
             category=req.category,
+            transaction_flow=req.transactionFlow,
         )
 
     def to_resp(self, dto: TransactionDto) -> responses.TransactionUpsertResponse:
@@ -18,17 +19,19 @@ class TransactionMapper:
             amount=dto.amount,
             description=dto.description,
             category=dto.category,
+            transactionFlow=dto.transaction_flow,
             created_at=dto.created_at,
-            updated_at=dto.updated_at
+            updated_at=dto.updated_at,
         )
 
     # --- Dto -> Repo ---
     def to_entity(self, dto: TransactionDto) -> Transaction:
         return Transaction(
-            id=dto.id, #type: ignore
+            id=dto.id,  # type: ignore
             amount=dto.amount,
-            description= dto.description,
+            description=dto.description,
             category=dto.category,
+            transaction_flow=dto.transaction_flow,
         )
 
     def to_dto_from_entity(self, entity: Transaction) -> TransactionDto:
@@ -37,7 +40,8 @@ class TransactionMapper:
             amount=entity.amount,
             description=entity.description,
             category=entity.category,
+            transaction_flow=entity.transaction_flow,
             created_at=entity.created_at,
             updated_at=entity.updated_at,
-            deleted_at=entity.deleted_at
+            deleted_at=entity.deleted_at,
         )

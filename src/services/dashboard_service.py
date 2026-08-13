@@ -1,7 +1,6 @@
 from abc import abstractmethod
 
-class DashboardService:
 
+class DashboardService:
     @abstractmethod
-    def get_dashboard_details(self):
-        ...
+    def get_dashboard_details(self): ...
