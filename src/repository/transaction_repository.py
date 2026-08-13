@@ -1,7 +1,9 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from ..models import Transaction
 from ..utils import DateUtil
+from ..enums import TransactionFlow
 
 
 class TransactionRepository:
@@ -25,3 +27,20 @@ class TransactionRepository:
         self.db.commit()
         self.db.refresh(entity)
         return entity
+
+    def sum_by_flow(self, flow: str) -> float:
+        return (
+            self.db.query(func.coalesce(func.sum(Transaction.amount), 0.0))
+            .filter(Transaction.transaction_flow == flow, Transaction.deleted_at.is_(None),
+            )
+            .scalar()
+        )
+
+    def sum_by_category(self) -> list[tuple[str, float]]:
+        return (
+            self.db.query(Transaction.category, func.sum(Transaction.amount))
+            .filter(Transaction.transaction_flow == TransactionFlow.EXPENSE, Transaction.deleted_at.is_(None),
+            )
+            .group_by(Transaction.category)
+            .all()
+        )
