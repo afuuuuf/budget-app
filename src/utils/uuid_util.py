@@ -1,10 +1,11 @@
 import random
-import uuid
 import time
+import uuid
+
 
 class UuidUtil:
     """UUID Utils"""
-    
+
     # ─── UUID v7 ──────────────────────────────────────────────────────────────────
     @staticmethod
     def uuid_v7() -> str:

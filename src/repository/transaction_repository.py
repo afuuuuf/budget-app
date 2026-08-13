@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
+
 from ..models import Transaction
 from ..utils import DateUtil
+
 
 class TransactionRepository:
     def __init__(self, db: Session):
@@ -16,7 +18,7 @@ class TransactionRepository:
         return self.db.query(Transaction).all()
 
     def find_by_id(self, id: str) -> Transaction | None:
-        return self.db.query(Transaction).filter_by(id = id, deleted_at= None).first()
+        return self.db.query(Transaction).filter_by(id=id, deleted_at=None).first()
 
     def delete(self, entity: Transaction) -> None:
         entity.deleted_at = DateUtil.get_current_time()

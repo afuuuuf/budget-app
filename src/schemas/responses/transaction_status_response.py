@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 from ...enums import Status
 
+
 class TransactionStatusResponse(BaseModel):
     status: str
 
