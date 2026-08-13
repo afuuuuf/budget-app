@@ -1,8 +1,10 @@
 from datetime import datetime
 from decimal import Decimal
+
 from pydantic import BaseModel
 
 from ...enums import Category, TransactionFlow
+
 
 class TransactionDto(BaseModel):
     id: str | None = None

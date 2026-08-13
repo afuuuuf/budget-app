@@ -1,6 +1,8 @@
-from sqlalchemy import Column, String, Float, DateTime
+from sqlalchemy import Column, DateTime, Float, String
+
 from ..database import Base
-from ..utils import UuidUtil, DateUtil
+from ..utils import DateUtil, UuidUtil
+
 
 class Budget(Base):
     __tablename__ = "budgets"

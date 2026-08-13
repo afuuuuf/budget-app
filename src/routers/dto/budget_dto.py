@@ -3,6 +3,7 @@ from datetime import datetime
 
 from ...enums import BudgetType
 
+
 @dataclass
 class BudgetDto:
     amount: float

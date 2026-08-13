@@ -1,8 +1,8 @@
 import calendar
 from datetime import datetime
 
-class DateUtil:
 
+class DateUtil:
     @staticmethod
     def get_current_month_name() -> str:
         return calendar.month_name[datetime.now().month]

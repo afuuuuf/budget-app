@@ -3,6 +3,7 @@ from uuid import UUID
 
 from ..requests.transaction_upsert_request import TransactionUpsertRequest
 
+
 class TransactionUpsertResponse(TransactionUpsertRequest):
     id: UUID
     created_at: datetime
