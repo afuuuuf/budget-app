@@ -7,6 +7,7 @@ from ..mappers import BudgetMapper
 from ..repository import BudgetRepository
 from ..schemas import requests, responses
 from ..services import BudgetService
+from ..services.impl import BudgetServiceImpl
 
 router = APIRouter(prefix="/budgets", tags=["budgets"])
 
@@ -16,7 +17,9 @@ def get_mapper() -> BudgetMapper:
 
 
 def get_service(db: Session = Depends(get_db)) -> BudgetService:
-    return BudgetService(budget_repo=BudgetRepository(db), budget_mapper=BudgetMapper())
+    return BudgetServiceImpl(
+        budget_repo=BudgetRepository(db), budget_mapper=BudgetMapper()
+    )
 
 
 class BudgetRouters:
