@@ -7,6 +7,7 @@ from ..mappers import TransactionMapper
 from ..repository.transaction_repository import TransactionRepository
 from ..schemas import requests, responses
 from ..services import TransactionService
+from ..services.impl import TransactionServiceImpl
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 
@@ -16,8 +17,9 @@ def get_mapper() -> TransactionMapper:
 
 
 def get_service(db: Session = Depends(get_db)) -> TransactionService:
-    return TransactionService(
-        budget_repo=TransactionRepository(db), budget_mapper=TransactionMapper()
+    return TransactionServiceImpl(
+        transaction_repo=TransactionRepository(db),
+        transaction_mapper=TransactionMapper(),
     )
 
 
