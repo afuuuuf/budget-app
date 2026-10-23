@@ -1,0 +1,10 @@
+fastapi
+pydantic-settings
+sqlalchemy<2.1
+alembic
+uvicorn[standard]
+psycopg[binary]
+psycopg2-binary
+bcrypt
+PyJWT
+pytest

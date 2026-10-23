@@ -1,5 +1,11 @@
+from .auth_service import AuthService
 from .budget_service import BudgetService
 from .dashboard_service import DashboardService
 from .transaction_service import TransactionService
 
-__all__ = ["TransactionService", "BudgetService", "DashboardService"]
+__all__ = [
+    "TransactionService",
+    "BudgetService",
+    "DashboardService",
+    "AuthService",
+]
