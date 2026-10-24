@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from ...enums import SavingGoalStatus
 from .savings_goal_create_request import FutureDate
 
-_HEX_COLOR_PATTERN = r"^#[0-9a-fA-F]{6}\Z"
+_HEX_COLOR_PATTERN = r"^#[0-9a-fA-F]{6}$"
 
 
 class SavingsGoalEditRequest(BaseModel):
