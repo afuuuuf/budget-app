@@ -1,0 +1,28 @@
+from datetime import date
+from typing import Annotated
+
+from pydantic import AfterValidator, BaseModel, Field, field_validator
+
+from ...utils import DateUtil
+
+
+def _not_future(v: date) -> date:
+    if v > DateUtil.get_today_date():
+        raise ValueError("cannot be in the future")
+    return v
+
+
+PastOrToday = Annotated[date, AfterValidator(_not_future)]
+
+
+class SavingsContributionCreateRequest(BaseModel):
+    amount: int
+    contributed_at: PastOrToday | None = None
+    note: str | None = Field(default=None, max_length=255)
+
+    @field_validator("amount")
+    @classmethod
+    def non_zero(cls, v: int) -> int:
+        if v == 0:
+            raise ValueError("cannot be 0")
+        return v
