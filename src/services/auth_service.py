@@ -1,3 +1,4 @@
+from ..enums import TokenType
 from ..exception import UnauthorizedException, UnsupportedActionException
 from ..models import User
 from ..repository import UserRepository
@@ -26,7 +27,7 @@ class AuthService:
 
     def refresh(self, refresh_token: str) -> responses.AuthResponse:
         payload = JwtUtil.decode_token(refresh_token)
-        if payload.get("type") != "refresh":
+        if payload.get("type") != TokenType.REFRESH:
             raise UnauthorizedException("Refresh token required.")
         user = self.user_repo.find_by_id(payload["sub"])
         if user is None:
@@ -35,6 +36,6 @@ class AuthService:
 
     def _issue_tokens(self, user_id: str) -> responses.AuthResponse:
         return responses.AuthResponse(
-            access_token=JwtUtil.create_token(user_id, "access"),
-            refresh_token=JwtUtil.create_token(user_id, "refresh"),
+            access_token=JwtUtil.create_token(user_id, TokenType.ACCESS),
+            refresh_token=JwtUtil.create_token(user_id, TokenType.REFRESH),
         )
