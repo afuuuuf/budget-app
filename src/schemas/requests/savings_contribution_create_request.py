@@ -1,9 +1,10 @@
 from datetime import date
 from typing import Annotated
 
-from pydantic import AfterValidator, BaseModel, Field, field_validator
+from pydantic import AfterValidator, BaseModel, BeforeValidator, Field, field_validator
 
 from ...utils import DateUtil
+from .savings_goal_create_request import parse_date_str
 
 
 def _not_future(v: date) -> date:
@@ -12,7 +13,9 @@ def _not_future(v: date) -> date:
     return v
 
 
-PastOrToday = Annotated[date, AfterValidator(_not_future)]
+PastOrToday = Annotated[
+    date, BeforeValidator(parse_date_str), AfterValidator(_not_future)
+]
 
 
 class SavingsContributionCreateRequest(BaseModel):

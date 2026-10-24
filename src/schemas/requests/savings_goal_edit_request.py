@@ -1,9 +1,7 @@
 from pydantic import BaseModel, Field
 
 from ...enums import SavingGoalStatus
-from .savings_goal_create_request import FutureDate
-
-_HEX_COLOR_PATTERN = r"^#[0-9a-fA-F]{6}$"
+from .savings_goal_create_request import FutureDate, HexColor
 
 
 class SavingsGoalEditRequest(BaseModel):
@@ -12,4 +10,4 @@ class SavingsGoalEditRequest(BaseModel):
     target_date: FutureDate | None = None
     status: SavingGoalStatus | None = None
     icon: str | None = Field(default=None, max_length=50)
-    color: str | None = Field(default=None, pattern=_HEX_COLOR_PATTERN)
+    color: HexColor = None

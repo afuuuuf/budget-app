@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -26,7 +26,11 @@ def get_service(
     )
 
 
-@router.post("", response_model=responses.TransactionUpsertResponse, status_code=201)
+@router.post(
+    "",
+    response_model=responses.TransactionUpsertResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 def create_transaction(
     txn: requests.TransactionUpsertRequest,
     service: TransactionService = Depends(get_service),

@@ -12,6 +12,7 @@ from .routers import (
     auth_routers,
     budget_routers,
     dashboard_routers,
+    savings_routers,
     transactions_routers,
 )
 
@@ -44,6 +45,7 @@ api_v1.include_router(auth_routers.router)
 api_v1.include_router(transactions_routers.router)
 api_v1.include_router(budget_routers.router)
 api_v1.include_router(dashboard_routers.router)
+api_v1.include_router(savings_routers.router)
 
 app.include_router(api_v1)
 
