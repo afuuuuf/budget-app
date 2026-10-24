@@ -4,3 +4,4 @@ __pycache__/
 *.db
 .abacusai
 .ruff_cache
+.vscode
