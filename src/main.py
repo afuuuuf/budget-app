@@ -8,7 +8,12 @@ from alembic import command
 
 from .config import settings
 from .handler import ExceptionHandler
-from .routers import auth, budget_routers, dashboard_routers, transactions_routers
+from .routers import (
+    auth_routers,
+    budget_routers,
+    dashboard_routers,
+    transactions_routers,
+)
 
 
 def run_migrations():
@@ -35,7 +40,7 @@ app.add_middleware(
 ExceptionHandler.register_exception_handlers(app)
 
 api_v1 = APIRouter(prefix="/v1")
-api_v1.include_router(auth.router)
+api_v1.include_router(auth_routers.router)
 api_v1.include_router(transactions_routers.router)
 api_v1.include_router(budget_routers.router)
 api_v1.include_router(dashboard_routers.router)
