@@ -16,8 +16,9 @@ class BudgetServiceImpl(BudgetService):
         self.budget_mapper = budget_mapper
 
     def create_budget(self, budgetDto: BudgetDto) -> BudgetDto:
+        month = DateUtil.get_current_month_name()
         existingBudgetEntity = self.budget_repo.find_by_budget_type_and_month(
-            budgetDto.budget_type, DateUtil.get_current_month_name()
+            budgetDto.budget_type, month
         )
         if existingBudgetEntity is not None:
             raise UnsupportedActionException(
@@ -25,7 +26,7 @@ class BudgetServiceImpl(BudgetService):
                     existingBudgetEntity.budget_type, existingBudgetEntity.created_month
                 )
             )
-        budgetEntity = self.budget_mapper.to_entity(budgetDto)
+        budgetEntity = self.budget_mapper.to_entity(budgetDto, month)
         created_budget = self.budget_repo.save(budgetEntity)
         return self.budget_mapper.to_dto_from_entity(created_budget)
 
@@ -35,15 +36,11 @@ class BudgetServiceImpl(BudgetService):
         budgetEntity = self.budget_repo.find_by_budget_type_and_month(budgetType, month)
         if budgetEntity is None:
             raise NotFoundException(BUDGET_NOT_FOUND_MSG.format(budgetType, month))
-        newDto = self.budget_mapper.to_dto_from_entity(budgetEntity)
-        newDto.amount = budgetDto.amount
-        self.budget_mapper.update_entity_from_dto(budgetEntity, newDto)
+        budgetEntity.amount = budgetDto.amount
         edited_budget = self.budget_repo.update(budgetEntity)
         return self.budget_mapper.to_dto_from_entity(edited_budget)
 
-    def get_budget_details(
-        self, budgetType: BudgetType, month: str
-    ) -> BudgetDto | None:
+    def get_budget_details(self, budgetType: BudgetType, month: str) -> BudgetDto:
         budgetEntity = self.budget_repo.find_by_budget_type_and_month(budgetType, month)
         if not budgetEntity:
             raise NotFoundException(BUDGET_NOT_FOUND_MSG.format(budgetType, month))

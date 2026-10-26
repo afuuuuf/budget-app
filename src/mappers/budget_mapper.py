@@ -26,13 +26,12 @@ class BudgetMapper:
             amount=req.amount,
         )
 
-        # --- Dto -> Repo ---
-
-    def to_entity(self, dto: BudgetDto) -> Budget:
+    def to_entity(self, dto: BudgetDto, month: str | None = None) -> Budget:
         return Budget(
             id=dto.id,  # type: ignore
             amount=dto.amount,
             budget_type=dto.budget_type,
+            created_month=month,
         )
 
     def to_dto_from_entity(self, entity: Budget) -> BudgetDto:
@@ -45,7 +44,3 @@ class BudgetMapper:
             deleted_at=entity.deleted_at,
             created_month=entity.created_month,
         )
-
-    def update_entity_from_dto(self, entity: Budget, dto: BudgetDto) -> None:
-        entity.amount = dto.amount
-        entity.budget_type = dto.budget_type

@@ -1,0 +1,155 @@
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.orm import Session
+
+from ..database import get_db
+from ..deps import get_current_user
+from ..enums import Status
+from ..mappers import SavingsMapper
+from ..models import User
+from ..repository import SavingsRepository
+from ..schemas import requests, responses
+from ..services import SavingsService
+
+router = APIRouter(prefix="/savings", tags=["savings"])
+
+
+def get_mapper() -> SavingsMapper:
+    return SavingsMapper()
+
+
+def get_service(
+    db: Session = Depends(get_db),
+    mapper: SavingsMapper = Depends(get_mapper),
+) -> SavingsService:
+    return SavingsService(savings_repo=SavingsRepository(db), savings_mapper=mapper)
+
+
+@router.post(
+    "",
+    response_model=responses.SavingsGoalResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_savings_goals(
+    svgGoals: requests.SavingsGoalCreateRequest,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    svgGoalDto = mapper.to_goal_dto(svgGoals, user.id)
+    result = service.create_savings_goals(svgGoalDto)
+    return mapper.to_goal_resp(result)
+
+
+@router.put("/{id}", response_model=responses.SavingsGoalResponse)
+def update_savings_goals(
+    id: str,
+    svgGoals: requests.SavingsGoalEditRequest,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    result = service.update_savings_goals(id, user.id, svgGoals)
+    return mapper.to_goal_resp(result)
+
+
+@router.get(
+    "/{id}",
+    response_model=responses.SavingsGoalResponse,
+    status_code=status.HTTP_200_OK,
+)
+def get_savings_goals(
+    id: str,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    result = service.get_savings_goals(id, user.id)
+    return mapper.to_goal_resp(result)
+
+
+@router.get(
+    "", response_model=responses.SavingsGoalListResponse, status_code=status.HTTP_200_OK
+)
+def list_savings_goals(
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    results = service.list_savings_goals(user.id)
+    return mapper.to_goal_list_resp(results)
+
+
+@router.delete("/{id}", response_model=responses.StatusResponse)
+def delete_transaction(
+    id: str,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+):
+    service.delete_savings_goals(id, user.id)
+    return responses.StatusResponse.get_status_message(Status.DELETED)
+
+
+@router.post(
+    "/{id}/contributions",
+    response_model=responses.SavingsContributionResultResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_contribution(
+    id: str,
+    svgGoals: requests.SavingsContributionCreateRequest,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    contribution, goal = service.create_contribution(id, user, svgGoals)
+    return mapper.to_contribution_result_resp(contribution, goal)
+
+
+@router.get(
+    "/{id}/contributions",
+    response_model=responses.SavingsContributionListResponse,
+    status_code=status.HTTP_200_OK,
+)
+def list_contributions(
+    id: str,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    contributions = service.list_contributions(id, user.id)
+    return mapper.to_contribution_list_resp(contributions)
+
+
+@router.put(
+    "/{id}/contributions/{contribution_id}",
+    response_model=responses.SavingsContributionResultResponse,
+    status_code=status.HTTP_200_OK,
+)
+def update_contribution(
+    id: str,
+    contribution_id: str,
+    svgContribution: requests.SavingsContributionEditRequest,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    contribution, goal = service.update_contribution(
+        id, contribution_id, user.id, svgContribution
+    )
+    return mapper.to_contribution_result_resp(contribution, goal)
+
+
+@router.delete(
+    "/{id}/contributions/{contribution_id}",
+    response_model=responses.SavingsGoalResponse,
+    status_code=status.HTTP_200_OK,
+)
+def delete_contribution(
+    id: str,
+    contribution_id: str,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    goal = service.delete_contribution(id, contribution_id, user.id)
+    return mapper.to_goal_resp(goal)

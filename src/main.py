@@ -1,14 +1,20 @@
 from contextlib import asynccontextmanager
 
 from alembic.config import Config
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from alembic import command
 
 from .config import settings
 from .handler import ExceptionHandler
-from .routers import budget_routers, dashboard_routers, transactions_routers
+from .routers import (
+    auth_routers,
+    budget_routers,
+    dashboard_routers,
+    savings_routers,
+    transactions_routers,
+)
 
 
 def run_migrations():
@@ -34,9 +40,14 @@ app.add_middleware(
 
 ExceptionHandler.register_exception_handlers(app)
 
-app.include_router(transactions_routers.router)
-app.include_router(budget_routers.router)
-app.include_router(dashboard_routers.router)
+api_v1 = APIRouter(prefix="/v1")
+api_v1.include_router(auth_routers.router)
+api_v1.include_router(transactions_routers.router)
+api_v1.include_router(budget_routers.router)
+api_v1.include_router(dashboard_routers.router)
+api_v1.include_router(savings_routers.router)
+
+app.include_router(api_v1)
 
 
 @app.get("/")

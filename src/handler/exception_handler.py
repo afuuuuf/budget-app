@@ -1,8 +1,13 @@
-from fastapi import FastAPI, Request, logger
+from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.logger import logger
 from fastapi.responses import JSONResponse
 
-from ..exception import NotFoundException, UnsupportedActionException
+from ..exception import (
+    NotFoundException,
+    UnauthorizedException,
+    UnsupportedActionException,
+)
 
 
 class ExceptionHandler:
@@ -23,19 +28,32 @@ class ExceptionHandler:
             request: Request, exc: RequestValidationError
         ):
             errors = exc.errors()
-            first_error = errors[0]
-            field = first_error["loc"][-1]
+            lines = []
+            for error in errors:
+                parts = [str(p) for p in error["loc"] if p != "body"]
+                field = parts[-1] if parts else "body"
+                message = error["msg"]
+                if error["type"].startswith("value_error") and message.startswith(
+                    "Value error, "
+                ):
+                    message = message[len("Value error, ") :]
+                if error["type"] == "missing":
+                    message = f"{field} is required"
+                else:
+                    message = f"{field}: {message}"
+                lines.append(message)
 
-            if first_error["type"] == "missing":
-                message = f"{field} is required"
-            else:
-                message = first_error["msg"]
-
-            return JSONResponse(status_code=400, content={"detail": message})
+            return JSONResponse(status_code=400, content={"detail": lines})
 
         @app.exception_handler(NotFoundException)
         async def not_found_exception_handler(request: Request, exc: NotFoundException):
             return JSONResponse(status_code=404, content={"detail": str(exc)})
+
+        @app.exception_handler(UnauthorizedException)
+        async def unauthorized_exception_handler(
+            request: Request, exc: UnauthorizedException
+        ):
+            return JSONResponse(status_code=401, content={"detail": str(exc)})
 
         @app.exception_handler(UnsupportedActionException)
         async def unsupported_action_exception_handler(

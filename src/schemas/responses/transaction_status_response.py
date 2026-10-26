@@ -3,9 +3,9 @@ from pydantic import BaseModel
 from ...enums import Status
 
 
-class TransactionStatusResponse(BaseModel):
+class StatusResponse(BaseModel):
     status: str
 
     @classmethod
-    def get_status_message(cls, message: Status) -> "TransactionStatusResponse":
+    def get_status_message(cls, message: Status) -> "StatusResponse":
         return cls(status=message.value)

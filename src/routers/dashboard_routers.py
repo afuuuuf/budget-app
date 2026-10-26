@@ -15,19 +15,21 @@ def get_mapper() -> DashboardMapper:
     return DashboardMapper()
 
 
-def get_service(db: Session = Depends(get_db)) -> DashboardService:
+def get_service(
+    db: Session = Depends(get_db),
+    mapper: DashboardMapper = Depends(get_mapper),
+) -> DashboardService:
     return DashboardServiceImpl(
         transaction_repo=TransactionRepository(db),
         budget_repo=BudgetRepository(db),
-        dashboard_mapper=DashboardMapper(),
+        dashboard_mapper=mapper,
     )
 
 
-class DashboardRouters:
-    @router.get("", response_model=responses.DashboardListResponse, status_code=200)
-    def get_dashboard_list(
-        service: DashboardService = Depends(get_service),
-        mapper: DashboardMapper = Depends(get_mapper),
-    ):
-        result = service.get_dashboard_details()
-        return mapper.to_resp(result)
+@router.get("", response_model=responses.DashboardListResponse, status_code=200)
+def get_dashboard_list(
+    service: DashboardService = Depends(get_service),
+    mapper: DashboardMapper = Depends(get_mapper),
+):
+    result = service.get_dashboard_details()
+    return mapper.to_resp(result)
