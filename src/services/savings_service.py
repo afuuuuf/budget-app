@@ -1,8 +1,14 @@
 from ..exception import NotFoundException
 from ..mappers import SavingsMapper
+from ..models import User
 from ..repository import SavingsRepository
-from ..routers.dto import SavingsGoalComputedDto, SavingsGoalDto
-from ..schemas import SavingsGoalEditRequest
+from ..routers.dto import (
+    SavingsContributionDto,
+    SavingsGoalComputedDto,
+    SavingsGoalDto,
+)
+from ..schemas import SavingsContributionCreateRequest, SavingsGoalEditRequest
+from ..utils import DateUtil
 
 SAVING_GOAL_NOT_FOUND_MESSAGE = "Saving Goals Not Found"
 
@@ -20,6 +26,27 @@ class SavingsService:
         goalDto = self.savings_mapper.to_goal_dto_from_entity(createdEntity)
         current = self.savings_repo.sum_contributions_for_goal(goalDto.id or "")
         return self.savings_mapper.compute_progress(goalDto, current)
+
+    def create_contribution(
+        self, goal_id: str, user: User, req: SavingsContributionCreateRequest
+    ) -> tuple[SavingsContributionDto, SavingsGoalComputedDto]:
+        user_id = user.id
+        goal_entity = self.savings_repo.find_goal_by_id_for_user(goal_id, user_id)
+        if not goal_entity:
+            raise NotFoundException(SAVING_GOAL_NOT_FOUND_MESSAGE)
+
+        contribution = self.savings_mapper.to_contribution_dto(req, goal_id, user_id)
+        contribution.contributed_at = DateUtil.get_today_date()
+        contribution.contributed_by = user.email
+        saved = self.savings_repo.save_contribution(
+            self.savings_mapper.to_contribution_entity(contribution)
+        )
+        contribution_dto = self.savings_mapper.to_contribution_dto_from_entity(saved)
+
+        goal_dto = self.savings_mapper.to_goal_dto_from_entity(goal_entity)
+        current = self.savings_repo.sum_contributions_for_goal(goal_id)
+        goal_computed = self.savings_mapper.compute_progress(goal_dto, current)
+        return contribution_dto, goal_computed
 
     def update_savings_goals(
         self, goal_id: str, user_id: str, editReq: SavingsGoalEditRequest

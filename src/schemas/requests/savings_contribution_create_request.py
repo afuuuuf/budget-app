@@ -1,18 +1,16 @@
-from datetime import date
 from typing import Annotated
 
-from pydantic import AfterValidator, BaseModel, BeforeValidator, Field
+from pydantic import AfterValidator, BaseModel, Field
 
-from ...validator import AmountValidator, DateValidator
+from ...validator import AmountValidator
 
-PastOrToday = Annotated[
-    date,
-    BeforeValidator(DateValidator.dateIsoFormatValidation),
-    AfterValidator(DateValidator.notFutureDateValidation),
+Amount = Annotated[
+    int,
+    AfterValidator(AmountValidator.non_zero),
+    AfterValidator(AmountValidator.within_limit),
 ]
 
 
 class SavingsContributionCreateRequest(BaseModel):
-    amount: AmountValidator
-    contributed_at: PastOrToday | None = None
+    amount: Amount
     note: str | None = Field(default=None, max_length=255)

@@ -74,7 +74,6 @@ class SavingsMapper:
             goal_id=goal_id,
             user_id=user_id,
             amount=req.amount,
-            contributed_at=req.contributed_at or DateUtil.get_today_date(),
             note=req.note,
         )
 
@@ -115,6 +114,7 @@ class SavingsMapper:
             user_id=dto.user_id,
             amount=dto.amount,
             contributed_at=dto.contributed_at,
+            contributed_by=dto.contributed_by,
             note=dto.note,
         )
 
@@ -127,6 +127,7 @@ class SavingsMapper:
             user_id=entity.user_id,
             amount=entity.amount,
             contributed_at=entity.contributed_at,
+            contributed_by=entity.contributed_by,
             note=entity.note,
             created_at=entity.created_at,
         )
@@ -203,6 +204,7 @@ class SavingsMapper:
             goal_id=dto.goal_id,
             amount=dto.amount,
             contributed_at=dto.contributed_at,
+            contributed_by=dto.contributed_by,
             note=dto.note,
             created_at=dto.created_at,
         )

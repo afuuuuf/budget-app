@@ -24,6 +24,7 @@ class SavingsContribution(Base):
     user_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     amount = Column(BigInteger, nullable=False)
     contributed_at = Column(Date, nullable=False)
+    contributed_by = Column(String(255))
     note = Column(String(255))
     created_at = Column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

@@ -87,3 +87,19 @@ def delete_transaction(
 ):
     service.delete_savings_goals(id, user.id)
     return responses.StatusResponse.get_status_message(Status.DELETED)
+
+
+@router.post(
+    "/{id}/contributions",
+    response_model=responses.SavingsContributionResultResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_contribution(
+    id: str,
+    svgGoals: requests.SavingsContributionCreateRequest,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    contribution, goal = service.create_contribution(id, user, svgGoals)
+    return mapper.to_contribution_result_resp(contribution, goal)

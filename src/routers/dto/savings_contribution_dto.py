@@ -11,6 +11,7 @@ class SavingsContributionDto:
     amount: int
     id: str | None = None
     contributed_at: date | None = None
+    contributed_by: str | None = None
     note: str | None = None
     created_at: datetime | None = None
     # status of the goal after this contribution
