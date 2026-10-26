@@ -14,7 +14,7 @@ from .responses import (
     SavingsContributionResultResponse,
     SavingsGoalListResponse,
     SavingsGoalResponse,
-    TransactionStatusResponse,
+    StatusResponse,
     TransactionUpsertResponse,
     UserInfoResponse,
 )
@@ -22,7 +22,7 @@ from .responses import (
 __all__ = [
     "TransactionUpsertRequest",
     "TransactionUpsertResponse",
-    "TransactionStatusResponse",
+    "StatusResponse",
     "SavingsGoalCreateRequest",
     "SavingsGoalEditRequest",
     "SavingsContributionCreateRequest",

@@ -1,7 +1,10 @@
+from ..exception import NotFoundException
 from ..mappers import SavingsMapper
 from ..repository import SavingsRepository
 from ..routers.dto import SavingsGoalComputedDto, SavingsGoalDto
 from ..schemas import SavingsGoalEditRequest
+
+SAVING_GOAL_NOT_FOUND_MESSAGE = "Saving Goals Not Found"
 
 
 class SavingsService:
@@ -41,3 +44,11 @@ class SavingsService:
         goalDto = self.savings_mapper.to_goal_dto_from_entity(entity)
         current = self.savings_repo.sum_contributions_for_goal(goalDto.id or "")
         return self.savings_mapper.compute_progress(goalDto, current)
+
+    def delete_savings_goals(self, goal_id: str, user_id: str) -> SavingsGoalDto | None:
+        entity = self.savings_repo.find_goal_by_id_for_user(goal_id, user_id)
+        if not entity:
+            raise NotFoundException(SAVING_GOAL_NOT_FOUND_MESSAGE)
+        dto = self.savings_mapper.to_goal_dto_from_entity(entity)
+        self.savings_repo.delete_goal(entity)
+        return dto

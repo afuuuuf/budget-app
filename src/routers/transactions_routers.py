@@ -60,11 +60,11 @@ def get_transaction(
     return mapper.to_resp(result)
 
 
-@router.delete("/{id}", response_model=responses.TransactionStatusResponse)
+@router.delete("/{id}", response_model=responses.StatusResponse)
 def delete_transaction(
     id: str,
     service: TransactionService = Depends(get_service),
     mapper: TransactionMapper = Depends(get_mapper),
 ):
     service.delete_transaction(id)
-    return responses.TransactionStatusResponse.get_status_message(Status.DELETED)
+    return responses.StatusResponse.get_status_message(Status.DELETED)

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..deps import get_current_user
+from ..enums import Status
 from ..mappers import SavingsMapper
 from ..models import User
 from ..repository import SavingsRepository
@@ -76,3 +77,13 @@ def list_savings_goals(
 ):
     results = service.list_savings_goals(user.id)
     return mapper.to_goal_list_resp(results)
+
+
+@router.delete("/{id}", response_model=responses.StatusResponse)
+def delete_transaction(
+    id: str,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+):
+    service.delete_savings_goals(id, user.id)
+    return responses.StatusResponse.get_status_message(Status.DELETED)
