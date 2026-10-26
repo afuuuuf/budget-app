@@ -4,7 +4,7 @@ from typing import Annotated
 from pydantic import AfterValidator, BaseModel, BeforeValidator, Field, field_validator
 
 from ...utils import DateUtil
-from .savings_goal_create_request import parse_date_str
+from ...validator import DateValidator
 
 
 def _not_future(v: date) -> date:
@@ -14,7 +14,9 @@ def _not_future(v: date) -> date:
 
 
 PastOrToday = Annotated[
-    date, BeforeValidator(parse_date_str), AfterValidator(_not_future)
+    date,
+    BeforeValidator(DateValidator.dateIsoFormatValidation),
+    AfterValidator(_not_future),
 ]
 
 

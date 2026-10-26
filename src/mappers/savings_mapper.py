@@ -24,6 +24,46 @@ class SavingsMapper:
             color=req.color,
         )
 
+    def to_edit_goal_dto(
+        self, req: requests.SavingsGoalEditRequest, dto: SavingsGoalDto
+    ) -> SavingsGoalDto:
+        """Merge an edit request onto an existing, already-loaded goal."""
+        if req.name is not None:
+            dto.name = req.name
+        if req.target_amount is not None:
+            dto.target_amount = req.target_amount
+        if req.target_date is not None:
+            dto.target_date = req.target_date
+        if req.status is not None:
+            dto.status = req.status
+        if req.icon is not None:
+            dto.icon = req.icon
+        if req.color is not None:
+            dto.color = req.color
+        return dto
+
+    def apply_edit_to_entity(
+        self, entity: SavingsGoal, req: requests.SavingsGoalEditRequest
+    ) -> SavingsGoal:
+        """Overlay provided edit fields onto a persistent entity in place.
+
+        Mutates the loaded entity rather than building a new one, so the
+        instance stays bound to the session and update_goal can commit/refresh it.
+        """
+        if req.name is not None:
+            entity.name = req.name
+        if req.target_amount is not None:
+            entity.target_amount = req.target_amount
+        if req.target_date is not None:
+            entity.target_date = req.target_date
+        if req.status is not None:
+            entity.status = req.status
+        if req.icon is not None:
+            entity.icon = req.icon
+        if req.color is not None:
+            entity.color = req.color
+        return entity
+
     def to_contribution_dto(
         self,
         req: requests.SavingsContributionCreateRequest,

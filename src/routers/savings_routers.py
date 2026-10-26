@@ -34,8 +34,20 @@ def create_savings_goals(
     service: SavingsService = Depends(get_service),
     mapper: SavingsMapper = Depends(get_mapper),
 ):
-    svgGoalDto = mapper.to_goal_dto(svgGoals, user_id=user.id)
+    svgGoalDto = mapper.to_goal_dto(svgGoals, user.id)
     result = service.create_savings_goals(svgGoalDto)
+    return mapper.to_goal_resp(result)
+
+
+@router.put("/{id}", response_model=responses.SavingsGoalResponse)
+def update_savings_goals(
+    id: str,
+    svgGoals: requests.SavingsGoalEditRequest,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    result = service.update_savings_goals(id, user.id, svgGoals)
     return mapper.to_goal_resp(result)
 
 
