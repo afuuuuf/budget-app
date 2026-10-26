@@ -20,3 +20,9 @@ class DateValidator:
                     'must be in "YYYY-MM-DD" format (e.g. 2026-11-25'
                 ) from None
         return dateValue
+
+    @staticmethod
+    def notFutureDateValidation(dateValue: date) -> date:
+        if dateValue > DateUtil.get_today_date():
+            raise ValueError("cannot be in the future")
+        return dateValue
