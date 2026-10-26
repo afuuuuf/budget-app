@@ -16,3 +16,17 @@ class SavingsService:
         goalDto = self.savings_mapper.to_goal_dto_from_entity(createdEntity)
         current = self.savings_repo.sum_contributions_for_goal(goalDto.id or "")
         return self.savings_mapper.compute_progress(goalDto, current)
+
+    def list_savings_goals(self, user_id: str) -> list[SavingsGoalComputedDto]:
+        computed = []
+        for goal_entity in self.savings_repo.list_goals_for_user(user_id):
+            dto = self.savings_mapper.to_goal_dto_from_entity(goal_entity)
+            current = self.savings_repo.sum_contributions_for_goal(dto.id or "")
+            computed.append(self.savings_mapper.compute_progress(dto, current))
+        return computed
+
+    def get_savings_goals(self, goal_id: str, user_id: str) -> SavingsGoalComputedDto:
+        entity = self.savings_repo.find_goal_by_id_for_user(goal_id, user_id)
+        goalDto = self.savings_mapper.to_goal_dto_from_entity(entity)
+        current = self.savings_repo.sum_contributions_for_goal(goalDto.id or "")
+        return self.savings_mapper.compute_progress(goalDto, current)

@@ -37,3 +37,30 @@ def create_savings_goals(
     svgGoalDto = mapper.to_goal_dto(svgGoals, user_id=user.id)
     result = service.create_savings_goals(svgGoalDto)
     return mapper.to_goal_resp(result)
+
+
+@router.get(
+    "/{id}",
+    response_model=responses.SavingsGoalResponse,
+    status_code=status.HTTP_200_OK,
+)
+def get_savings_goals(
+    id: str,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    result = service.get_savings_goals(id, user.id)
+    return mapper.to_goal_resp(result)
+
+
+@router.get(
+    "", response_model=responses.SavingsGoalListResponse, status_code=status.HTTP_200_OK
+)
+def list_savings_goals(
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    results = service.list_savings_goals(user.id)
+    return mapper.to_goal_list_resp(results)
