@@ -8,7 +8,7 @@ class SavingsContributionResponse(BaseModel):
     goal_id: str
     amount: int
     contributed_at: date
-    contributed_by: str
+    contributed_by: str | None
     note: str | None
     created_at: datetime | None = None
 

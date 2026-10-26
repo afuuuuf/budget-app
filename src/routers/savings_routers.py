@@ -103,3 +103,18 @@ def create_contribution(
 ):
     contribution, goal = service.create_contribution(id, user, svgGoals)
     return mapper.to_contribution_result_resp(contribution, goal)
+
+
+@router.get(
+    "/{id}/contributions",
+    response_model=responses.SavingsContributionListResponse,
+    status_code=status.HTTP_200_OK,
+)
+def list_contributions(
+    id: str,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    contributions = service.list_contributions(id, user.id)
+    return mapper.to_contribution_list_resp(contributions)

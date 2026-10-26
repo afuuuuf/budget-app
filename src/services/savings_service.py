@@ -48,6 +48,23 @@ class SavingsService:
         goal_computed = self.savings_mapper.compute_progress(goal_dto, current)
         return contribution_dto, goal_computed
 
+    def list_contributions(
+        self, goal_id: str, user_id: str
+    ) -> list[SavingsContributionDto]:
+        goal_entity = self.savings_repo.find_goal_by_id_for_user(goal_id, user_id)
+        if not goal_entity:
+            raise NotFoundException(SAVING_GOAL_NOT_FOUND_MESSAGE)
+
+        contribution_list: list[SavingsContributionDto] = []
+        for contribution_entity in self.savings_repo.list_contributions_for_goal(
+            goal_id
+        ):
+            dto = self.savings_mapper.to_contribution_dto_from_entity(
+                contribution_entity
+            )
+            contribution_list.append(dto)
+        return contribution_list
+
     def update_savings_goals(
         self, goal_id: str, user_id: str, editReq: SavingsGoalEditRequest
     ) -> SavingsGoalComputedDto:
