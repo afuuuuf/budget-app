@@ -118,3 +118,38 @@ def list_contributions(
 ):
     contributions = service.list_contributions(id, user.id)
     return mapper.to_contribution_list_resp(contributions)
+
+
+@router.put(
+    "/{id}/contributions/{contribution_id}",
+    response_model=responses.SavingsContributionResultResponse,
+    status_code=status.HTTP_200_OK,
+)
+def update_contribution(
+    id: str,
+    contribution_id: str,
+    svgContribution: requests.SavingsContributionEditRequest,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    contribution, goal = service.update_contribution(
+        id, contribution_id, user.id, svgContribution
+    )
+    return mapper.to_contribution_result_resp(contribution, goal)
+
+
+@router.delete(
+    "/{id}/contributions/{contribution_id}",
+    response_model=responses.SavingsGoalResponse,
+    status_code=status.HTTP_200_OK,
+)
+def delete_contribution(
+    id: str,
+    contribution_id: str,
+    user: User = Depends(get_current_user),
+    service: SavingsService = Depends(get_service),
+    mapper: SavingsMapper = Depends(get_mapper),
+):
+    goal = service.delete_contribution(id, contribution_id, user.id)
+    return mapper.to_goal_resp(goal)

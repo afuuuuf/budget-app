@@ -132,6 +132,18 @@ class SavingsMapper:
             created_at=entity.created_at,
         )
 
+    def apply_contribution_edit_to_entity(
+        self,
+        entity: SavingsContribution,
+        req: requests.SavingsContributionEditRequest,
+    ) -> SavingsContribution:
+        """Overlay provided edit fields onto a persistent contribution in place."""
+        if req.amount is not None:
+            entity.amount = req.amount
+        if req.note is not None:
+            entity.note = req.note
+        return entity
+
     # --- Computed fields (pure math; current_amount supplied by the repo/service) ---
     @staticmethod
     def compute_progress(

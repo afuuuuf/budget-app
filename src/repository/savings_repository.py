@@ -60,6 +60,16 @@ class SavingsRepository:
         self.db.refresh(entity)
         return entity
 
+    def update_contribution(self, entity: SavingsContribution) -> SavingsContribution:
+        self.db.commit()
+        self.db.refresh(entity)
+        return entity
+
+    def delete_contribution(self, entity: SavingsContribution) -> SavingsContribution:
+        self.db.delete(entity)
+        self.db.commit()
+        return entity
+
     # --- Contributions: read ---
     def list_contributions_for_goal(self, goal_id: str) -> list[SavingsContribution]:
         return (
