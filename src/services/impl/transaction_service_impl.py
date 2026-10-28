@@ -1,5 +1,6 @@
 import logging
 
+from ...enums import TransactionFlow
 from ...exception import NotFoundException
 from ...mappers import TransactionMapper
 from ...repository import TransactionRepository
@@ -46,3 +47,11 @@ class TransactionServiceImpl(TransactionService):
         txnDto = self.transaction_mapper.to_dto_from_entity(txnEntity)
         self.transaction_repo.delete(txnEntity)
         return txnDto
+
+    def get_transaction_sum_by_transaction_flow_type(
+        self, transactionFlowType: TransactionFlow
+    ) -> float:
+        return self.transaction_repo.sum_by_flow(transactionFlowType)
+
+    def get_transaction_sum_by_category(self) -> list[tuple[str, float]]:
+        return self.transaction_repo.sum_by_category()

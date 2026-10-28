@@ -15,3 +15,6 @@ class BudgetService(ABC):
 
     @abstractmethod
     def get_budget_details(self, budgetType: BudgetType, month: str) -> BudgetDto: ...
+
+    @abstractmethod
+    def get_budget_list_by_month(self, month: str) -> list[BudgetDto]: ...

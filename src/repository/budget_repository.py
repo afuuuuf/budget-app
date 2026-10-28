@@ -27,6 +27,11 @@ class BudgetRepository:
     def find_by_id(self, id: str) -> Budget | None:
         return self.db.query(Budget).filter_by(id=id, deleted_at=None).first()
 
+    def find_budget_by_month(self, month: str) -> list[Budget]:
+        return (
+            self.db.query(Budget).filter_by(created_month=month, deleted_at=None).all()
+        )
+
     def find_by_budget_type_and_month(
         self, budgetType: BudgetType, month: str
     ) -> Budget | None:

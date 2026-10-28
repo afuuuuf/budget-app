@@ -1,4 +1,4 @@
-from sqlalchemy import func
+from sqlalchemy import ColumnElement, func
 from sqlalchemy.orm import Session
 
 from ..enums import TransactionFlow
@@ -16,11 +16,20 @@ class TransactionRepository:
         self.db.refresh(entity)
         return entity
 
+    def _flow_filters(self, flow: TransactionFlow) -> list[ColumnElement[bool]]:
+        return [
+            Transaction.transaction_flow == flow,
+            Transaction.deleted_at.is_(None),
+        ]
+
     def list_all(self) -> list[Transaction]:
         return self.db.query(Transaction).filter_by(deleted_at=None).all()
 
     def find_by_id(self, id: str) -> Transaction | None:
         return self.db.query(Transaction).filter_by(id=id, deleted_at=None).first()
+
+    def find_by_flow(self, flow: TransactionFlow) -> list[Transaction]:
+        return self.db.query(Transaction).filter(*self._flow_filters(flow)).all()
 
     def delete(self, entity: Transaction) -> None:
         entity.deleted_at = DateUtil.get_current_time()
@@ -28,23 +37,18 @@ class TransactionRepository:
         self.db.refresh(entity)
         return entity
 
-    def sum_by_flow(self, flow: str) -> float:
+    def sum_by_flow(self, flow: TransactionFlow) -> float:
         return (
             self.db.query(func.coalesce(func.sum(Transaction.amount), 0.0))
-            .filter(
-                Transaction.transaction_flow == flow,
-                Transaction.deleted_at.is_(None),
-            )
+            .filter(*self._flow_filters(flow))
             .scalar()
         )
 
     def sum_by_category(self) -> list[tuple[str, float]]:
-        return (
+        rows = (
             self.db.query(Transaction.category, func.sum(Transaction.amount))
-            .filter(
-                Transaction.transaction_flow == TransactionFlow.EXPENSE,
-                Transaction.deleted_at.is_(None),
-            )
+            .filter(*self._flow_filters(TransactionFlow.EXPENSE))
             .group_by(Transaction.category)
             .all()
         )
+        return [(category, amount) for category, amount in rows]

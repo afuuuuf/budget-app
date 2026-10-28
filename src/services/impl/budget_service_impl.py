@@ -46,3 +46,10 @@ class BudgetServiceImpl(BudgetService):
             raise NotFoundException(BUDGET_NOT_FOUND_MSG.format(budgetType, month))
         budgetDto = self.budget_mapper.to_dto_from_entity(budgetEntity)
         return budgetDto
+
+    def get_budget_list_by_month(self, month: str) -> list[BudgetDto]:
+        budget_entities = self.budget_repo.find_budget_by_month(month)
+        return [
+            self.budget_mapper.to_dto_from_entity(budgetEntity)
+            for budgetEntity in budget_entities
+        ]
