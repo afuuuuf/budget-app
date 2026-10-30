@@ -37,10 +37,7 @@ class SavingsService:
         self, goal_id: str, user: User, req: SavingsContributionCreateRequest
     ) -> tuple[SavingsContributionDto, SavingsGoalComputedDto]:
         user_id = user.id
-        goal_entity = self.savings_repo.find_goal_by_id_for_user(goal_id, user_id)
-        if not goal_entity:
-            raise NotFoundException(SAVING_GOAL_NOT_FOUND_MESSAGE)
-
+        goal_entity = self._get_saving_goal_by_user(goal_id, user_id)
         contribution = self.savings_mapper.to_contribution_dto(req, goal_id, user_id)
         contribution.contributed_at = DateUtil.get_today_date()
         contribution.contributed_by = user.email
@@ -59,14 +56,10 @@ class SavingsService:
         user_id: str,
         req: SavingsContributionEditRequest,
     ) -> tuple[SavingsContributionDto, SavingsGoalComputedDto]:
-        goal_entity = self.savings_repo.find_goal_by_id_for_user(goal_id, user_id)
-        if not goal_entity:
-            raise NotFoundException(SAVING_GOAL_NOT_FOUND_MESSAGE)
-
-        contribution_entity = self.savings_repo.find_contribution_by_id(contribution_id)
-        if not contribution_entity or contribution_entity.goal_id != goal_id:
-            raise NotFoundException(SAVING_CONTRIBUTION_NOT_FOUND_MESSAGE)
-
+        goal_entity = self._get_saving_goal_by_user(goal_id, user_id)
+        contribution_entity = self._get_saving_contribution_by_contribution_id(
+            contribution_id, goal_id
+        )
         self.savings_mapper.apply_contribution_edit_to_entity(contribution_entity, req)
         updated = self.savings_repo.update_contribution(contribution_entity)
         contribution_dto = self.savings_mapper.to_contribution_dto_from_entity(updated)
@@ -77,43 +70,19 @@ class SavingsService:
     def delete_contribution(
         self, goal_id: str, contribution_id: str, user_id: str
     ) -> SavingsGoalComputedDto:
-        goal_entity = self.savings_repo.find_goal_by_id_for_user(goal_id, user_id)
-        if not goal_entity:
-            raise NotFoundException(SAVING_GOAL_NOT_FOUND_MESSAGE)
+        goal_entity = self._get_saving_goal_by_user(goal_id, user_id)
 
-        contribution_entity = self.savings_repo.find_contribution_by_id(contribution_id)
-        if not contribution_entity or contribution_entity.goal_id != goal_id:
-            raise NotFoundException(SAVING_CONTRIBUTION_NOT_FOUND_MESSAGE)
+        contribution_entity = self._get_saving_contribution_by_contribution_id(
+            contribution_id, goal_id
+        )
 
         self.savings_repo.delete_contribution(contribution_entity)
         return self._refresh_goal_progress(goal_entity)
 
-    def _refresh_goal_progress(
-        self, goal_entity: SavingsGoal
-    ) -> SavingsGoalComputedDto:
-        current = self.savings_repo.sum_contributions_for_goal(goal_entity.id or "")
-        if (
-            current >= goal_entity.target_amount
-            and goal_entity.status != SavingGoalStatus.COMPLETED
-        ):
-            goal_entity.status = SavingGoalStatus.COMPLETED
-            self.savings_repo.update_goal(goal_entity)
-        elif (
-            current < goal_entity.target_amount
-            and goal_entity.status == SavingGoalStatus.COMPLETED
-        ):
-            goal_entity.status = SavingGoalStatus.ACTIVE
-            self.savings_repo.update_goal(goal_entity)
-        goal_dto = self.savings_mapper.to_goal_dto_from_entity(goal_entity)
-        return self.savings_mapper.compute_progress(goal_dto, current)
-
     def list_contributions(
         self, goal_id: str, user_id: str
     ) -> list[SavingsContributionDto]:
-        goal_entity = self.savings_repo.find_goal_by_id_for_user(goal_id, user_id)
-        if not goal_entity:
-            raise NotFoundException(SAVING_GOAL_NOT_FOUND_MESSAGE)
-
+        self._get_saving_goal_by_user(goal_id, user_id)
         contribution_list: list[SavingsContributionDto] = []
         for contribution_entity in self.savings_repo.list_contributions_for_goal(
             goal_id
@@ -149,9 +118,39 @@ class SavingsService:
         return self.savings_mapper.compute_progress(goalDto, current)
 
     def delete_savings_goals(self, goal_id: str, user_id: str) -> SavingsGoalDto | None:
-        entity = self.savings_repo.find_goal_by_id_for_user(goal_id, user_id)
-        if not entity:
-            raise NotFoundException(SAVING_GOAL_NOT_FOUND_MESSAGE)
+        entity = self._get_saving_goal_by_user(goal_id, user_id)
         dto = self.savings_mapper.to_goal_dto_from_entity(entity)
         self.savings_repo.delete_goal(entity)
         return dto
+
+    def _get_saving_goal_by_user(self, goal_id: str, user_id: str) -> SavingsGoal:
+        goal_entity = self.savings_repo.find_goal_by_id_for_user(goal_id, user_id)
+        if not goal_entity:
+            raise NotFoundException(SAVING_GOAL_NOT_FOUND_MESSAGE)
+        return goal_entity
+
+    def _get_saving_contribution_by_contribution_id(
+        self, contribution_id: str, goal_id: str
+    ):
+        contribution_entity = self.savings_repo.find_contribution_by_id(contribution_id)
+        if not contribution_entity or contribution_entity.goal_id != goal_id:
+            raise NotFoundException(SAVING_CONTRIBUTION_NOT_FOUND_MESSAGE)
+
+    def _refresh_goal_progress(
+        self, goal_entity: SavingsGoal
+    ) -> SavingsGoalComputedDto:
+        current = self.savings_repo.sum_contributions_for_goal(goal_entity.id or "")
+        if (
+            current >= goal_entity.target_amount
+            and goal_entity.status != SavingGoalStatus.COMPLETED
+        ):
+            goal_entity.status = SavingGoalStatus.COMPLETED
+            self.savings_repo.update_goal(goal_entity)
+        elif (
+            current < goal_entity.target_amount
+            and goal_entity.status == SavingGoalStatus.COMPLETED
+        ):
+            goal_entity.status = SavingGoalStatus.ACTIVE
+            self.savings_repo.update_goal(goal_entity)
+        goal_dto = self.savings_mapper.to_goal_dto_from_entity(goal_entity)
+        return self.savings_mapper.compute_progress(goal_dto, current)
