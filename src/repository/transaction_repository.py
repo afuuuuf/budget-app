@@ -22,11 +22,17 @@ class TransactionRepository:
             Transaction.deleted_at.is_(None),
         ]
 
-    def list_all(self) -> list[Transaction]:
-        return self.db.query(Transaction).filter_by(deleted_at=None).all()
+    def list_all(self, user_id: str) -> list[Transaction]:
+        return (
+            self.db.query(Transaction).filter_by(user_id=user_id, deleted_at=None).all()
+        )
 
-    def find_by_id(self, id: str) -> Transaction | None:
-        return self.db.query(Transaction).filter_by(id=id, deleted_at=None).first()
+    def find_by_id(self, id: str, user_id: str) -> Transaction | None:
+        return (
+            self.db.query(Transaction)
+            .filter_by(id=id, user_id=user_id, deleted_at=None)
+            .first()
+        )
 
     def find_by_flow(self, flow: TransactionFlow) -> list[Transaction]:
         return self.db.query(Transaction).filter(*self._flow_filters(flow)).all()
@@ -35,7 +41,6 @@ class TransactionRepository:
         entity.deleted_at = DateUtil.get_current_time()
         self.db.commit()
         self.db.refresh(entity)
-        return entity
 
     def sum_by_flow(self, flow: TransactionFlow) -> float:
         return (

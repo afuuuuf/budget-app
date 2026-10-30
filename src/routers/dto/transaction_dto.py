@@ -1,5 +1,4 @@
 from datetime import datetime
-from decimal import Decimal
 
 from pydantic import BaseModel
 
@@ -8,7 +7,8 @@ from ...enums import Category, TransactionFlow
 
 class TransactionDto(BaseModel):
     id: str | None = None
-    amount: Decimal
+    user_id: str
+    amount: float
     description: str | None
     category: Category
     transaction_flow: TransactionFlow

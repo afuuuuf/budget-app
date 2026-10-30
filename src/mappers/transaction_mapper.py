@@ -5,8 +5,11 @@ from ..schemas import requests, responses
 
 class TransactionMapper:
     # --- Routers -> Dto Mapper ---
-    def to_dto(self, req: requests.TransactionUpsertRequest) -> TransactionDto:
+    def to_dto(
+        self, req: requests.TransactionUpsertRequest, user_id: str
+    ) -> TransactionDto:
         return TransactionDto(
+            user_id=user_id,
             amount=req.amount,
             description=req.description,
             category=req.category,
@@ -28,6 +31,7 @@ class TransactionMapper:
     def to_entity(self, dto: TransactionDto) -> Transaction:
         return Transaction(
             id=dto.id,  # type: ignore
+            user_id=dto.user_id,
             amount=dto.amount,
             description=dto.description,
             category=dto.category,
@@ -37,6 +41,7 @@ class TransactionMapper:
     def to_dto_from_entity(self, entity: Transaction) -> TransactionDto:
         return TransactionDto(
             id=entity.id,
+            user_id=entity.user_id,
             amount=entity.amount,
             description=entity.description,
             category=entity.category,
