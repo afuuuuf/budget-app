@@ -6,6 +6,7 @@ from ...enums import BudgetType
 
 @dataclass
 class BudgetDto:
+    user_id: str
     amount: float
     budget_type: BudgetType | None = None
     id: str | None = None

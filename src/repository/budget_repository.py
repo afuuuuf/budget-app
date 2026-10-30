@@ -32,12 +32,12 @@ class BudgetRepository:
             self.db.query(Budget).filter_by(created_month=month, deleted_at=None).all()
         )
 
-    def find_by_budget_type_and_month(
-        self, budgetType: BudgetType, month: str
+    def find_by_budget_type_and_month_and_user_id(
+        self, budgetType: BudgetType, month: str, user_id: str
     ) -> Budget | None:
         return (
             self.db.query(Budget)
-            .filter_by(budget_type=budgetType, created_month=month)
+            .filter_by(budget_type=budgetType, created_month=month, user_id=user_id)
             .first()
         )
 
