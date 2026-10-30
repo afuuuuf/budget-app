@@ -18,7 +18,7 @@ class Transaction(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=DateUtil.get_current_time, nullable=False
     )
-    updated_at: Mapped[datetime] = mapped_column(
+    updated_at: Mapped[datetime | None] = mapped_column(
         DateTime, default=DateUtil.get_current_time
     )
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
