@@ -1,7 +1,7 @@
 from ..enums import SavingGoalStatus
 from ..exception import NotFoundException
 from ..mappers import SavingsMapper
-from ..models import SavingsGoal, User
+from ..models import SavingsContribution, SavingsGoal, User
 from ..repository import SavingsRepository
 from ..routers.dto import (
     SavingsContributionDto,
@@ -131,10 +131,11 @@ class SavingsService:
 
     def _get_saving_contribution_by_contribution_id(
         self, contribution_id: str, goal_id: str
-    ):
+    ) -> SavingsContribution:
         contribution_entity = self.savings_repo.find_contribution_by_id(contribution_id)
         if not contribution_entity or contribution_entity.goal_id != goal_id:
             raise NotFoundException(SAVING_CONTRIBUTION_NOT_FOUND_MESSAGE)
+        return contribution_entity
 
     def _refresh_goal_progress(
         self, goal_entity: SavingsGoal
