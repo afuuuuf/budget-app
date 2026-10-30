@@ -45,4 +45,3 @@ class BudgetRepository:
         entity.deleted_at = DateUtil.get_current_time()
         self.db.commit()
         self.db.refresh(entity)
-        return entity
