@@ -6,11 +6,7 @@ from ..mappers import BudgetMapper, DashboardMapper, TransactionMapper
 from ..repository import BudgetRepository, TransactionRepository
 from ..schemas import responses
 from ..services import BudgetService, DashboardService, TransactionService
-from ..services.impl import (
-    BudgetServiceImpl,
-    DashboardServiceImpl,
-    TransactionServiceImpl,
-)
+from ..services.impl import DashboardServiceImpl, TransactionServiceImpl
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -31,9 +27,7 @@ def get_budget_service(
     db: Session = Depends(get_db),
     budget_mapper: BudgetMapper = Depends(get_budget_mapper),
 ) -> BudgetService:
-    return BudgetServiceImpl(
-        budget_repo=BudgetRepository(db), budget_mapper=budget_mapper
-    )
+    return BudgetService(budget_repo=BudgetRepository(db), budget_mapper=budget_mapper)
 
 
 def get_transaction_service(
