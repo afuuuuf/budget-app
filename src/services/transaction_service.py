@@ -50,6 +50,15 @@ class TransactionService:
     def get_transaction_sum_by_category(self, user_id: str) -> list[tuple[str, int]]:
         return self.transaction_repo.sum_by_category(user_id)
 
+    def get_net_cash_flow(self, total_income: int, total_expenses: int) -> int:
+        return total_income - total_expenses
+
+    def get_net_savings_rate(self, total_income: int, total_expenses: int) -> float:
+        if not total_income:
+            return 0.0
+        net_cash_flow = self.get_net_cash_flow(total_income, total_expenses)
+        return net_cash_flow / total_income * 100
+
     def _get_transaction_entity_by_id_and_user_id(
         self, id: str, user_id: str
     ) -> Transaction:
