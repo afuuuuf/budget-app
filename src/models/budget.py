@@ -4,7 +4,7 @@ from sqlalchemy import BigInteger, DateTime, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..database import Base
-from ..enums import BudgetType
+from ..enums import Category
 from ..utils import DateUtil, UuidUtil
 
 
@@ -16,8 +16,8 @@ class Budget(Base):
         String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     amount: Mapped[int] = mapped_column(BigInteger, nullable=False)
-    budget_type: Mapped[BudgetType] = mapped_column(
-        Enum(BudgetType, native_enum=False, length=20),
+    category: Mapped[Category] = mapped_column(
+        Enum(Category, native_enum=False, length=20),
         index=True,
         nullable=False,
     )

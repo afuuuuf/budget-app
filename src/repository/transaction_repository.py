@@ -1,7 +1,7 @@
 from sqlalchemy import ColumnElement, func
 from sqlalchemy.orm import Session
 
-from ..enums import TransactionFlow
+from ..enums import Category, TransactionFlow
 from ..models import Transaction
 from ..utils import DateUtil
 
@@ -49,7 +49,7 @@ class TransactionRepository:
             .scalar()
         )
 
-    def sum_by_category(self, user_id: str) -> list[tuple[str, int]]:
+    def sum_by_category(self, user_id: str) -> list[tuple[Category, int]]:
         rows = (
             self.db.query(Transaction.category, func.sum(Transaction.amount))
             .filter(*self._flow_filters(TransactionFlow.EXPENSE, user_id))

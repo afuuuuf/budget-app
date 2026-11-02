@@ -1,15 +1,17 @@
 from pydantic import BaseModel
 
+from ...enums import Category
+
 
 class BudgetOverviewItem(BaseModel):
-    budgetType: str
+    category: Category
     amount: int
     spent: int
     remaining: int
 
 
 class CategorySpendingItem(BaseModel):
-    category: str
+    category: Category
     amount: int
 
 

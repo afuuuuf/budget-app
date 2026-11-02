@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from ..database import get_db
 from ..deps import get_current_user
-from ..enums import BudgetType
+from ..enums import Category
 from ..mappers import BudgetMapper
 from ..models import User
 from ..repository import BudgetRepository
@@ -40,23 +40,23 @@ def create_budget(
 def edit_budget(
     budget: requests.BudgetEditRequest,
     user: User = Depends(get_current_user),
-    budgetType: BudgetType = Query(..., description="Filter by budget type"),
+    category: Category = Query(..., description="Filter by category"),
     month: str = Query(..., description="Filter by Month"),
     budget_service: BudgetService = Depends(get_service),
     mapper: BudgetMapper = Depends(get_mapper),
 ):
     budget_dto = mapper.to_dto_from_edit_request(budget, user.id)
-    result = budget_service.edit_budget(budget_dto, budgetType, month)
+    result = budget_service.edit_budget(budget_dto, category, month)
     return mapper.to_resp(result)
 
 
 @router.get("", response_model=responses.BudgetDetailsResponse)
 def get_budget_details(
     user: User = Depends(get_current_user),
-    budgetType: BudgetType = Query(..., description="Filter by budget type"),
+    category: Category = Query(..., description="Filter by category"),
     month: str = Query(..., description="Filter by Month"),
     budget_service: BudgetService = Depends(get_service),
     mapper: BudgetMapper = Depends(get_mapper),
 ):
-    result = budget_service.get_budget_details(budgetType, month, user.id)
+    result = budget_service.get_budget_details(category, month, user.id)
     return mapper.to_resp(result)

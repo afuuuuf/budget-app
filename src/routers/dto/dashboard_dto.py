@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from ...enums import Category
+
 
 @dataclass
 class DashboardDto:
@@ -7,5 +9,5 @@ class DashboardDto:
     total_expenses: int
     current_balance: int
     net_savings_rate: float
-    budget_overview: list[tuple[str, int, int, int]]  # (budget_type, amount
-    category_spending: list[tuple[str, int]]
+    budget_overview: list[tuple[Category, int, int, int]]  # (category, amount
+    category_spending: list[tuple[Category, int]]

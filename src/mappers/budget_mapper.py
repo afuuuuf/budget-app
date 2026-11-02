@@ -9,14 +9,14 @@ class BudgetMapper:
     ) -> BudgetDto:
         return BudgetDto(
             user_id=user_id,
-            budget_type=req.budgetType,
+            category=req.category,
             amount=req.amount,
         )
 
     def to_resp(self, dto: BudgetDto) -> responses.BudgetUpsertResponse:
         return responses.BudgetUpsertResponse(
             id=dto.id,
-            budgetType=dto.budget_type,
+            category=dto.category,
             amount=dto.amount,
         )
 
@@ -33,7 +33,7 @@ class BudgetMapper:
             id=dto.id,  # type: ignore
             user_id=dto.user_id,
             amount=dto.amount,
-            budget_type=dto.budget_type,
+            category=dto.category,
             created_month=month,
         )
 
@@ -42,7 +42,7 @@ class BudgetMapper:
             id=entity.id,
             user_id=entity.user_id,
             amount=entity.amount,
-            budget_type=entity.budget_type,
+            category=entity.category,
             created_at=entity.created_at,
             updated_at=entity.updated_at,
             deleted_at=entity.deleted_at,

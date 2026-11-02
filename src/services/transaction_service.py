@@ -1,6 +1,6 @@
 import logging
 
-from ..enums import TransactionFlow
+from ..enums import Category, TransactionFlow
 from ..exception import NotFoundException
 from ..mappers import TransactionMapper
 from ..models import Transaction
@@ -47,7 +47,9 @@ class TransactionService:
     ) -> int:
         return self.transaction_repo.sum_by_flow(transactionFlowType, user_id)
 
-    def get_transaction_sum_by_category(self, user_id: str) -> list[tuple[str, int]]:
+    def get_transaction_sum_by_category(
+        self, user_id: str
+    ) -> list[tuple[Category, int]]:
         return self.transaction_repo.sum_by_category(user_id)
 
     def get_net_cash_flow(self, total_income: int, total_expenses: int) -> int:
