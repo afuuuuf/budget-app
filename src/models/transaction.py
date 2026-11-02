@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, Enum, Float, ForeignKey, String
+from sqlalchemy import BigInteger, DateTime, Enum, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..database import Base
@@ -16,7 +16,7 @@ class Transaction(Base):
         String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     description: Mapped[str] = mapped_column(String, nullable=False)
-    amount: Mapped[float] = mapped_column(Float, nullable=False)
+    amount: Mapped[int] = mapped_column(BigInteger, nullable=False)
     category: Mapped[Category] = mapped_column(
         Enum(Category, native_enum=False, length=20), index=True, nullable=False
     )

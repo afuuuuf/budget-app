@@ -8,7 +8,7 @@ from ...enums import Category, TransactionFlow
 class TransactionDto(BaseModel):
     id: str | None = None
     user_id: str
-    amount: float
+    amount: int
     description: str | None
     category: Category
     transaction_flow: TransactionFlow

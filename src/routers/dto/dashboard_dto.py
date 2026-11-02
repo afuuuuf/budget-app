@@ -3,9 +3,9 @@ from dataclasses import dataclass
 
 @dataclass
 class DashboardDto:
-    total_income: float
-    total_expenses: float
-    current_balance: float
+    total_income: int
+    total_expenses: int
+    current_balance: int
     savings_progress: float
-    budget_overview: list[tuple[str, float, float, float]]  # (budget_type, amount
-    category_spending: list[tuple[str, float]]
+    budget_overview: list[tuple[str, int, int, int]]  # (budget_type, amount
+    category_spending: list[tuple[str, int]]

@@ -5,4 +5,4 @@ from ...enums import BudgetType
 
 class BudgetCreateRequest(BaseModel):
     budgetType: BudgetType
-    amount: float
+    amount: int

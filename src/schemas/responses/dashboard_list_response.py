@@ -3,20 +3,20 @@ from pydantic import BaseModel
 
 class BudgetOverviewItem(BaseModel):
     budgetType: str
-    amount: float
-    spent: float
-    remaining: float
+    amount: int
+    spent: int
+    remaining: int
 
 
 class CategorySpendingItem(BaseModel):
     category: str
-    amount: float
+    amount: int
 
 
 class DashboardListResponse(BaseModel):
-    totalIncome: float
-    totalExpenses: float
-    currentBalance: float
+    totalIncome: int
+    totalExpenses: int
+    currentBalance: int
     savingsProgress: float
     budgetOverview: list[BudgetOverviewItem]
     categorySpending: list[CategorySpendingItem]
