@@ -44,10 +44,10 @@ class TransactionService:
 
     def get_transaction_sum_by_transaction_flow_type(
         self, transactionFlowType: TransactionFlow, user_id: str
-    ) -> float:
+    ) -> int:
         return self.transaction_repo.sum_by_flow(transactionFlowType, user_id)
 
-    def get_transaction_sum_by_category(self, user_id: str) -> list[tuple[str, float]]:
+    def get_transaction_sum_by_category(self, user_id: str) -> list[tuple[str, int]]:
         return self.transaction_repo.sum_by_category(user_id)
 
     def _get_transaction_entity_by_id_and_user_id(
