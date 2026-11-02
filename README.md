@@ -7,7 +7,7 @@ A layered FastAPI backend for managing personal budgets, transactions, savings g
 - **Auth** — register, login, refresh, and logout with JWT (access + refresh tokens, bcrypt-hashed passwords)
 - **Transactions** — create (income/expense), list, get by id, soft-delete
 - **Budgets** — create, update, and fetch monthly budget details
-- **Dashboard** — aggregated overview of budget and transaction data
+- **Dashboard** — aggregated overview: total income/expenses, current balance, net savings rate, spending by category, and a month's budget overview (budget vs. actual spent vs. remaining)
 - **Savings goals** — full CRUD with computed progress (current amount, remaining, percent, monthly-needed)
 - **Savings contributions** — record deposits against a goal; auto-completes the goal when the target is reached; edit and delete supported
 
@@ -130,19 +130,22 @@ Access tokens are valid 30 minutes; refresh tokens 30 days.
 | GET    | `/{id}` | Get one transaction             |
 | DELETE | `/{id}` | Soft-delete (sets `deleted_at`) |
 
-### Budgets (`/v1/budgets`)
+### Budgets (`/v1/budgets`) — the shared `Category` taxonomy
 
-| Method | Path | Description                           |
-| ------ | ---- | ------------------------------------- |
-| POST   | `/`  | Create a budget for the current month |
-| PUT    | `/`  | Update the current month's budget     |
-| GET    | `/`  | Budget details for the current month  |
+| Method | Path | Description                                     |
+| ------ | ---- | ----------------------------------------------- |
+| POST   | `/`  | Create a budget for a category this month      |
+| PUT    | `/`  | Update the month's budget for a category        |
+| GET    | `/`  | Budget details for a category this month        |
+
+A budget's `category` is set at creation and is immutable — edit changes amount only. A budget is
+scoped to a user and a `created_month`; one budget per category per month.
 
 ### Dashboard (`/v1/dashboard`)
 
-| Method | Path | Description                   |
-| ------ | ---- | ----------------------------- |
-| GET    | `/`  | Aggregated dashboard overview |
+| Method | Path | Description                          |
+| ------ | ---- | ------------------------------------ |
+| GET    | `/`  | Aggregate overview for the user      |
 
 ### Savings (`/v1/savings`)
 
@@ -188,13 +191,13 @@ budget-app/
 │   │   └── log_config.py
 │   ├── deps/
 │   │   └── auth.py           # get_current_user (JWT bearer)
-│   ├── enums/                # StrEnum values: Category, BudgetType, TransactionFlow, ...
+│   ├── enums/                # StrEnum values (singular, merged taxonomy): Category, TransactionFlow, ...
 │   ├── exception/            # Custom exceptions (NotFound, Unauthorized, ...)
 │   ├── handler/
 │   │   └── exception_handler.py  # Global exception -> HTTP responses
 │   ├── models/               # SQLAlchemy ORM models (users, transactions, budgets, savings)
 │   ├── routers/              # HTTP layer: plain module-level route functions
-│   │   ├── dto/              # Dataclasses passed between layers (SavingsGoalDto, ...)
+│   │   ├── dto/              # Dataclasses passed between layers (SavingsGoalDto, BudgetDto, DashboardDto)
 │   │   ├── auth_routers.py
 │   │   ├── transactions_routers.py
 │   │   ├── budget_routers.py
@@ -203,8 +206,7 @@ budget-app/
 │   ├── schemas/
 │   │   ├── requests/         # Pydantic request schemas (validators, Annotated types)
 │   │   └── responses/        # Pydantic response schemas
-│   ├── services/             # Business logic (SavingsService, AuthService, ...)
-│   │   └── impl/             # Impl classes for older services
+│   ├── services/             # Business logic (SavingsService, AuthService, TransactionService, ...)
 │   ├── mappers/              # conversions: request -> DTO -> entity -> response
 │   ├── repository/           # DB access: queries per aggregate
 │   ├── utils/                # JwtUtil, PasswordUtil, UuidUtil, DateUtil
@@ -251,11 +253,15 @@ Direction of dependencies is strictly downward — routers never touch the DB, s
 ## Code Conventions & Gotchas
 
 - **Every PK/FK is a `String` column holding a UUID v7**, generated in Python via `UuidUtil.uuid_v7` — NOT a native Postgres `UUID` type. New FK columns must be `String` too, or the FK fails (`DatatypeMismatch`).
+- **All money is integer minor units (`BigInteger` / `Mapped[int]`)** — there is no units↔dollars conversion layer; amounts travel as whole minor units (e.g. `350` = 3.50) straight through request → DTO → model. The only floats in the API are ratios/percentages (e.g. `netSavingsRate`). New money fields must be `Mapped[int] = mapped_column(BigInteger)`.
+- **Budget and transaction categories share one enum (`Category`)** — budgets are created *for* a category in the same taxonomy transactions use, so budget-vs-actual comparison works. Don't reintroduce a separate budget-type enum.
 - **Soft deletes** for transactions, budgets, and savings goals: rows keep a `deleted_at` timestamp; list/find queries filter `deleted_at IS NULL`.
 - **Deletion vs restore** — `Status` enum strings are the message bodies of status responses ("Deleted Successfully", ...).
 - **Ruff**: `python -m ruff format .` and `python -m ruff check .` (run from `src/` for lint; `alembic/` is excluded in `pyproject.toml`).
 - Name style in this codebase is `snake_case` for functions but `camelCase` in several pre-existing service signatures (e.g. `svgGoalDto`) — match the file you're editing.
-- When importing modules in scratch scripts, import `src.main` first (`mappers` ↔ `services` form a benign circular import if touched independently).
+- When importing modules in scratch scripts, import `src.main` first — it wires the package `__init__`
+  barrels (`mappers`/`services`/`routers`) in the right order, avoiding `ImportError` from partially
+  initialized packages.
 
 ## Lint & Format
 
