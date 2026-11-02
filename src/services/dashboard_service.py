@@ -1,4 +1,4 @@
-from ..enums import TransactionFlow
+from ..enums import Category, TransactionFlow
 from ..mappers import DashboardMapper
 from ..routers.dto import DashboardDto
 from ..utils import DateUtil
@@ -42,13 +42,16 @@ class DashboardService:
         )
         spent_by_category = dict(category_spending)
 
-        budget_overview = []
+        budget_overview: list[tuple[Category, int, int, int]] = []
         for budget in self.budget_service.get_budget_list_by_month(
             DateUtil.get_current_month_name(), user_id
         ):
+            if budget.category is None:
+                continue
             spent = spent_by_category.get(budget.category, 0)
+            remaining_budget = budget.amount - spent
             budget_overview.append(
-                (budget.category, budget.amount, spent, budget.amount - spent)
+                (budget.category, budget.amount, spent, remaining_budget)
             )
 
         return DashboardDto(
