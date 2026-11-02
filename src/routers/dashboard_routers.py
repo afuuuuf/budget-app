@@ -2,11 +2,12 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from ..database import get_db
+from ..deps import get_current_user
 from ..mappers import BudgetMapper, DashboardMapper, TransactionMapper
+from ..models import User
 from ..repository import BudgetRepository, TransactionRepository
 from ..schemas import responses
 from ..services import BudgetService, DashboardService, TransactionService
-from ..services.impl import DashboardServiceImpl
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
@@ -46,7 +47,7 @@ def get_service(
     budget_service: BudgetService = Depends(get_budget_service),
     transaction_service: TransactionService = Depends(get_transaction_service),
 ) -> DashboardService:
-    return DashboardServiceImpl(
+    return DashboardService(
         dashboard_mapper=mapper,
         budget_service=budget_service,
         transaction_service=transaction_service,
@@ -55,8 +56,9 @@ def get_service(
 
 @router.get("", response_model=responses.DashboardListResponse, status_code=200)
 def get_dashboard_list(
+    user: User = Depends(get_current_user),
     service: DashboardService = Depends(get_service),
     mapper: DashboardMapper = Depends(get_mapper),
 ):
-    result = service.get_dashboard_details()
+    result = service.get_dashboard_details(user.id)
     return mapper.to_resp(result)
