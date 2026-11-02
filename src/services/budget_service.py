@@ -54,8 +54,8 @@ class BudgetService:
         budgetDto = self.budget_mapper.to_dto_from_entity(budget_entity)
         return budgetDto
 
-    def get_budget_list_by_month(self, month: str) -> list[BudgetDto]:
-        budget_entities = self.budget_repo.find_budget_by_month(month)
+    def get_budget_list_by_month(self, month: str, user_id: str) -> list[BudgetDto]:
+        budget_entities = self.budget_repo.find_budget_by_month(month, user_id)
         return [
             self.budget_mapper.to_dto_from_entity(budget_entity)
             for budget_entity in budget_entities
