@@ -43,12 +43,12 @@ class TransactionService:
         return self.transaction_mapper.to_dto_from_entity(transaction_entity)
 
     def get_transaction_sum_by_transaction_flow_type(
-        self, transactionFlowType: TransactionFlow
+        self, transactionFlowType: TransactionFlow, user_id: str
     ) -> float:
-        return self.transaction_repo.sum_by_flow(transactionFlowType)
+        return self.transaction_repo.sum_by_flow(transactionFlowType, user_id)
 
-    def get_transaction_sum_by_category(self) -> list[tuple[str, float]]:
-        return self.transaction_repo.sum_by_category()
+    def get_transaction_sum_by_category(self, user_id: str) -> list[tuple[str, float]]:
+        return self.transaction_repo.sum_by_category(user_id)
 
     def _get_transaction_entity_by_id_and_user_id(
         self, id: str, user_id: str
