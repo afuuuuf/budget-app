@@ -17,6 +17,6 @@ class DashboardListResponse(BaseModel):
     totalIncome: int
     totalExpenses: int
     currentBalance: int
-    savingsProgress: float
+    netSavingsRate: float
     budgetOverview: list[BudgetOverviewItem]
     categorySpending: list[CategorySpendingItem]

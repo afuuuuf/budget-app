@@ -8,7 +8,7 @@ class DashboardMapper:
             totalIncome=dto.total_income,
             totalExpenses=dto.total_expenses,
             currentBalance=dto.current_balance,
-            savingsProgress=dto.savings_progress,
+            netSavingsRate=dto.net_savings_rate,
             budgetOverview=[
                 responses.BudgetOverviewItem(
                     budgetType=budget_type,
