@@ -5,40 +5,44 @@ from ..schemas import requests, responses
 
 class BudgetMapper:
     def to_dto_from_create_request(
-        self, req: requests.BudgetCreateRequest
+        self, req: requests.BudgetCreateRequest, user_id: str
     ) -> BudgetDto:
         return BudgetDto(
-            budget_type=req.budgetType,
+            user_id=user_id,
+            category=req.category,
             amount=req.amount,
         )
 
     def to_resp(self, dto: BudgetDto) -> responses.BudgetUpsertResponse:
         return responses.BudgetUpsertResponse(
             id=dto.id,
-            budgetType=dto.budget_type,
+            category=dto.category,
             amount=dto.amount,
-            created_at=dto.created_at,
-            updated_at=dto.updated_at,
         )
 
-    def to_dto_from_edit_request(self, req: requests.BudgetEditRequest) -> BudgetDto:
+    def to_dto_from_edit_request(
+        self, req: requests.BudgetEditRequest, user_id: str
+    ) -> BudgetDto:
         return BudgetDto(
             amount=req.amount,
+            user_id=user_id,
         )
 
     def to_entity(self, dto: BudgetDto, month: str | None = None) -> Budget:
         return Budget(
             id=dto.id,  # type: ignore
+            user_id=dto.user_id,
             amount=dto.amount,
-            budget_type=dto.budget_type,
+            category=dto.category,
             created_month=month,
         )
 
     def to_dto_from_entity(self, entity: Budget) -> BudgetDto:
         return BudgetDto(
             id=entity.id,
+            user_id=entity.user_id,
             amount=entity.amount,
-            budget_type=entity.budget_type,
+            category=entity.category,
             created_at=entity.created_at,
             updated_at=entity.updated_at,
             deleted_at=entity.deleted_at,

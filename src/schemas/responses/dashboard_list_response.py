@@ -1,22 +1,24 @@
 from pydantic import BaseModel
 
+from ...enums import Category
+
 
 class BudgetOverviewItem(BaseModel):
-    budgetType: str
-    amount: float
-    spent: float
-    remaining: float
+    category: Category
+    amount: int
+    spent: int
+    remaining: int
 
 
 class CategorySpendingItem(BaseModel):
-    category: str
-    amount: float
+    category: Category
+    amount: int
 
 
 class DashboardListResponse(BaseModel):
-    totalIncome: float
-    totalExpenses: float
-    currentBalance: float
-    savingsProgress: float
+    totalIncome: int
+    totalExpenses: int
+    currentBalance: int
+    netSavingsRate: float
     budgetOverview: list[BudgetOverviewItem]
     categorySpending: list[CategorySpendingItem]

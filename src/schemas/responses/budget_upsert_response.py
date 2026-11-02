@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 
-from ...enums import BudgetType
+from ...enums import Category
 
 
 class BudgetUpsertResponse(BaseModel):
     id: str
-    budgetType: BudgetType
-    amount: float
+    category: Category
+    amount: int

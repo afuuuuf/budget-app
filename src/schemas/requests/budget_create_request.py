@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-from ...enums import BudgetType
+from ...enums import Category
 
 
 class BudgetCreateRequest(BaseModel):
-    budgetType: BudgetType
-    amount: float
+    category: Category
+    amount: int

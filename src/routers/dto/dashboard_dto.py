@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 
+from ...enums import Category
+
 
 @dataclass
 class DashboardDto:
-    total_income: float
-    total_expenses: float
-    current_balance: float
-    savings_progress: float
-    budget_overview: list[tuple[str, float, float, float]]  # (budget_type, amount
-    category_spending: list[tuple[str, float]]
+    total_income: int
+    total_expenses: int
+    current_balance: int
+    net_savings_rate: float
+    budget_overview: list[tuple[Category, int, int, int]]  # (category, amount
+    category_spending: list[tuple[Category, int]]

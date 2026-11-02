@@ -80,7 +80,7 @@ def list_savings_goals(
 
 
 @router.delete("/{id}", response_model=responses.StatusResponse)
-def delete_transaction(
+def delete_savings_goals(
     id: str,
     user: User = Depends(get_current_user),
     service: SavingsService = Depends(get_service),

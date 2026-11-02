@@ -5,6 +5,6 @@ from ...enums import Category, TransactionFlow
 
 class TransactionUpsertRequest(BaseModel):
     description: str
-    amount: float
+    amount: int
     category: Category
     transactionFlow: TransactionFlow

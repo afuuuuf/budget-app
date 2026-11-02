@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from ..enums import BudgetType
+from ..enums import Category
 from ..models import Budget
 from ..utils import DateUtil
 
@@ -27,12 +27,19 @@ class BudgetRepository:
     def find_by_id(self, id: str) -> Budget | None:
         return self.db.query(Budget).filter_by(id=id, deleted_at=None).first()
 
-    def find_by_budget_type_and_month(
-        self, budgetType: BudgetType, month: str
+    def find_budget_by_month(self, month: str, user_id: str) -> list[Budget]:
+        return (
+            self.db.query(Budget)
+            .filter_by(created_month=month, user_id=user_id, deleted_at=None)
+            .all()
+        )
+
+    def find_by_category_and_month_and_user_id(
+        self, category: Category, month: str, user_id: str
     ) -> Budget | None:
         return (
             self.db.query(Budget)
-            .filter_by(budget_type=budgetType, created_month=month)
+            .filter_by(category=category, created_month=month, user_id=user_id)
             .first()
         )
 
@@ -40,4 +47,3 @@ class BudgetRepository:
         entity.deleted_at = DateUtil.get_current_time()
         self.db.commit()
         self.db.refresh(entity)
-        return entity
