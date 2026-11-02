@@ -1,4 +1,3 @@
-from ..enums import SavingGoalStatus
 from ..exception import NotFoundException
 from ..mappers import SavingsMapper
 from ..models import SavingsContribution, SavingsGoal, User
@@ -140,18 +139,13 @@ class SavingsService:
     def _refresh_goal_progress(
         self, goal_entity: SavingsGoal
     ) -> SavingsGoalComputedDto:
-        current = self.savings_repo.sum_contributions_for_goal(goal_entity.id or "")
-        if (
-            current >= goal_entity.target_amount
-            and goal_entity.status != SavingGoalStatus.COMPLETED
-        ):
-            goal_entity.status = SavingGoalStatus.COMPLETED
-            self.savings_repo.update_goal(goal_entity)
-        elif (
-            current < goal_entity.target_amount
-            and goal_entity.status == SavingGoalStatus.COMPLETED
-        ):
-            goal_entity.status = SavingGoalStatus.ACTIVE
-            self.savings_repo.update_goal(goal_entity)
+        current = self.savings_repo.sum_contributions_for_goal(goal_entity.id)
+        self._get_new_status(goal_entity, current)
         goal_dto = self.savings_mapper.to_goal_dto_from_entity(goal_entity)
         return self.savings_mapper.compute_progress(goal_dto, current)
+
+    def _get_new_status(self, goal_entity: SavingsGoal, current: int) -> None:
+        new_status = goal_entity.status.get_status(current, goal_entity.target_amount)
+        if new_status != goal_entity.status:
+            goal_entity.status = new_status
+            self.savings_repo.update_goal(goal_entity)
