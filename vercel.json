@@ -3,11 +3,5 @@
     "api/index.py": {
       "includeFiles": "migrations/**,alembic.ini,src/**"
     }
-  },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/index"
-    }
-  ]
+  }
 }
