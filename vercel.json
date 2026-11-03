@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/index.py": {
-      "includeFiles": "alembic/**,alembic.ini,src/**"
+      "includeFiles": "migrations/**,alembic.ini,src/**"
     }
   },
   "rewrites": [

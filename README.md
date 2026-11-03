@@ -179,7 +179,7 @@ Design notes:
 
 ```
 budget-app/
-├── alembic/                  # Alembic migrations
+├── migrations/              # Alembic migrations
 │   ├── env.py                # Reads DATABASE_URL from settings (src.config)
 │   ├── script.py.mako        # Migration template
 │   └── versions/             # Versioned migration files
@@ -257,7 +257,7 @@ Direction of dependencies is strictly downward — routers never touch the DB, s
 - **Budget and transaction categories share one enum (`Category`)** — budgets are created *for* a category in the same taxonomy transactions use, so budget-vs-actual comparison works. Don't reintroduce a separate budget-type enum.
 - **Soft deletes** for transactions, budgets, and savings goals: rows keep a `deleted_at` timestamp; list/find queries filter `deleted_at IS NULL`.
 - **Deletion vs restore** — `Status` enum strings are the message bodies of status responses ("Deleted Successfully", ...).
-- **Ruff**: `python -m ruff format .` and `python -m ruff check .` (run from `src/` for lint; `alembic/` is excluded in `pyproject.toml`).
+- **Ruff**: `python -m ruff format .` and `python -m ruff check .` (run from `src/` for lint; `migrations/` is excluded in `pyproject.toml`).
 - Name style in this codebase is `snake_case` for functions but `camelCase` in several pre-existing service signatures (e.g. `svgGoalDto`) — match the file you're editing.
 - When importing modules in scratch scripts, import `src.main` first — it wires the package `__init__`
   barrels (`mappers`/`services`/`routers`) in the right order, avoiding `ImportError` from partially

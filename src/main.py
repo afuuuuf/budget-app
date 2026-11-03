@@ -1,10 +1,9 @@
 from contextlib import asynccontextmanager
 
+from alembic import command
 from alembic.config import Config
 from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from alembic import command
 
 from .config import settings
 from .handler import ExceptionHandler
