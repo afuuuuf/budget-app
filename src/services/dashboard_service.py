@@ -44,7 +44,7 @@ class DashboardService:
 
         budget_overview: list[tuple[Category, int, int, int]] = []
         for budget in self.budget_service.get_budget_list_by_month(
-            DateUtil.get_current_month_name(), user_id
+            DateUtil.get_current_month(), user_id
         ):
             if budget.category is None:
                 continue

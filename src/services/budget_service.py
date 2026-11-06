@@ -16,7 +16,7 @@ class BudgetService:
         self.budget_mapper = budget_mapper
 
     def create_budget(self, budget_dto: BudgetDto) -> BudgetDto:
-        month = DateUtil.get_current_month_name()
+        month = DateUtil.get_current_month()
 
         if budget_dto.category is not None:
             existing_budget_entity = (
