@@ -1,4 +1,5 @@
 from .category import Category
+from .month import Month
 from .saving_goal_status import SavingGoalStatus
 from .status import Status
 from .token_type import TokenType
@@ -10,4 +11,5 @@ __all__ = [
     "TransactionFlow",
     "TokenType",
     "SavingGoalStatus",
+    "Month",
 ]
