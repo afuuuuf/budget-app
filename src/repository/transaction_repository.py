@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from ..enums import Category, TransactionFlow
 from ..models import Transaction
-from ..utils import DateUtil
+from ..utils import DateRange, DateUtil
 
 
 class TransactionRepository:
@@ -17,13 +17,17 @@ class TransactionRepository:
         return entity
 
     def _flow_filters(
-        self, flow: TransactionFlow, user_id: str
+        self, flow: TransactionFlow, user_id: str, period: DateRange | None = None
     ) -> list[ColumnElement[bool]]:
-        return [
+        filters: list[ColumnElement[bool]] = [
             Transaction.transaction_flow == flow,
             Transaction.deleted_at.is_(None),
             Transaction.user_id == user_id,
         ]
+        if period is not None:
+            filters.append(Transaction.transaction_date >= period.start)
+            filters.append(Transaction.transaction_date < period.end)
+        return filters
 
     def list_all(self, user_id: str) -> list[Transaction]:
         return (
@@ -42,17 +46,21 @@ class TransactionRepository:
         self.db.commit()
         self.db.refresh(entity)
 
-    def sum_by_flow(self, flow: TransactionFlow, user_id: str) -> int:
+    def sum_by_flow(
+        self, flow: TransactionFlow, user_id: str, period: DateRange | None = None
+    ) -> int:
         return (
             self.db.query(func.coalesce(func.sum(Transaction.amount), 0))
-            .filter(*self._flow_filters(flow, user_id))
+            .filter(*self._flow_filters(flow, user_id, period))
             .scalar()
         )
 
-    def sum_by_category(self, user_id: str) -> list[tuple[Category, int]]:
+    def sum_by_category(
+        self, user_id: str, period: DateRange | None = None
+    ) -> list[tuple[Category, int]]:
         rows = (
             self.db.query(Transaction.category, func.sum(Transaction.amount))
-            .filter(*self._flow_filters(TransactionFlow.EXPENSE, user_id))
+            .filter(*self._flow_filters(TransactionFlow.EXPENSE, user_id, period))
             .group_by(Transaction.category)
             .all()
         )
