@@ -14,6 +14,9 @@ class User(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True, default=UuidUtil.uuid_v7)
     email: Mapped[str] = mapped_column(String, nullable=False)
     password_hash: Mapped[str] = mapped_column(String, nullable=False)
+    username: Mapped[str] = mapped_column(String, nullable=False)
+    first_name: Mapped[str] = mapped_column(String, nullable=False)
+    last_name: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=DateUtil.get_current_time, nullable=False
     )
